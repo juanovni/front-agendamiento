@@ -1,12 +1,27 @@
 import { useEffect, useState } from "react";
 import { getBrands } from "../services/brandService";
+import { Card, CardBody, Select, SelectItem } from "@heroui/react";
 
 interface Brand {
   id: string;
   nombre: string;
   estado: string;
 }
-
+export const animals = [
+  { key: "cat", label: "Cat" },
+  { key: "dog", label: "Dog" },
+  { key: "elephant", label: "Elephant" },
+  { key: "lion", label: "Lion" },
+  { key: "tiger", label: "Tiger" },
+  { key: "giraffe", label: "Giraffe" },
+  { key: "dolphin", label: "Dolphin" },
+  { key: "penguin", label: "Penguin" },
+  { key: "zebra", label: "Zebra" },
+  { key: "shark", label: "Shark" },
+  { key: "whale", label: "Whale" },
+  { key: "otter", label: "Otter" },
+  { key: "crocodile", label: "Crocodile" },
+];
 const Brand = () => {
   const [brands, setBrands] = useState<Brand[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -32,14 +47,17 @@ const Brand = () => {
 
   return (
     <>
-      <h2>Brands</h2>
-      <ul>
-        {brands.map((brand) => (
-          <li key={brand.id}>
-            {brand.nombre} - {brand.id}
-          </li>
-        ))}
-      </ul>
+      <Card>
+        <CardBody>
+          <h2>Brands</h2>
+          <p>Make beautiful websites regardless of your design experience.</p>
+          <Select className="max-w-xs" label="Select an animal">
+            {brands.map((brand) => (
+              <SelectItem key={brand.id}>{brand.nombre}</SelectItem>
+            ))}
+          </Select>
+        </CardBody>
+      </Card>
     </>
   );
 };
