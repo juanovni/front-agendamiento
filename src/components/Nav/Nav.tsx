@@ -1,4 +1,5 @@
 import { Navbar, NavbarBrand } from "@heroui/react";
+import texts from "../../util/text";
 
 export const AcmeLogo = () => {
   return (
@@ -15,10 +16,12 @@ export const AcmeLogo = () => {
 
 const Nav = () => {
   return (
-    <Navbar className="bg-orange-500 text-white">
+    <Navbar className="bg-orange-600 text-white">
       <NavbarBrand>
         <AcmeLogo />
-        <p className="font-bold text-inherit">ACME</p>
+        <p className="font-bold text-inherit">
+          {texts.DESCRIPTIONS.businessTitle.first}
+        </p>
       </NavbarBrand>
     </Navbar>
   );
