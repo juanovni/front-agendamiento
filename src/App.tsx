@@ -1,10 +1,12 @@
-import Brand from "./components/Brand";
+import Layout from "./components/Layout/Layout";
 
 function App() {
   return (
-    <div className="max-w-2xl mx-auto p-6 mt-10">
-      <Brand />
-    </div>
+    <Layout>
+      <h1 className="text-5xl font-semibold tracking-tight text-balance text-gray-900 sm:text-4xl">
+        Import Main Layout
+      </h1>
+    </Layout>
   );
 }
 
