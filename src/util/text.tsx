@@ -1,9 +1,10 @@
 const texts = {
-  DESCRIPTIONS: {
+  BUSINESS: {
     businessTitle: {
       first: "DGMotors",
       second: "Taller Auotomotriz",
     },
+    project: "Autoagendamiento"
   },
 };
 

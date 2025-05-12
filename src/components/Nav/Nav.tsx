@@ -20,7 +20,7 @@ const Nav = () => {
       <NavbarBrand>
         <AcmeLogo />
         <p className="font-bold text-inherit">
-          {texts.DESCRIPTIONS.businessTitle.first}
+          {texts.BUSINESS.businessTitle.first}
         </p>
       </NavbarBrand>
     </Navbar>
