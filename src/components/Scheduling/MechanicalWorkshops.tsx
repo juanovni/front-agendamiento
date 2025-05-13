@@ -73,12 +73,13 @@ const MechanicalWorkshops = ({
     });
   };
 
-  const handleMechanicalClick = (mechanicId: string) => {
+  const handleMechanicalClick = (mechanicId: number) => {
     setMechanicalValue(mechanicId);
     updateFormData({ mechanicId });
   };
 
   const showNextButton = () => {
+    console.log(formData)
     if (!formData.mechanicId) {
       return true;
     }
@@ -135,7 +136,9 @@ const MechanicalWorkshops = ({
               {mechanicalWorkshops.map((mechanicalWorkshop) => (
                 <div
                   key={mechanicalWorkshop.id}
-                  onClick={(e) => handleMechanicalClick(mechanicalWorkshop.id)}
+                  onClick={(e) =>
+                    handleMechanicalClick(parseInt(mechanicalWorkshop.id))
+                  }
                 >
                   <Card
                     className={`cursor-pointer min-h-[440px] hover:shadow-xl ${

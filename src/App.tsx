@@ -27,13 +27,7 @@ function App() {
 
   return (
     <Layout>
-       <MechanicalWorkshops
-          formData={formData}
-          updateFormData={updateFormData}
-          next={next}
-          prev={prev}
-        />
-     {/*  {step === 1 && (
+      {step === 1 && (
         <SearhVehicle
           formData={formData}
           updateFormData={updateFormData}
@@ -55,7 +49,7 @@ function App() {
           next={next}
           prev={prev}
         />
-      )} */}
+      )}
     </Layout>
   );
 }
