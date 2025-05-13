@@ -33,6 +33,11 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
     fetchMaintenance();
   }, []);
 
+  useEffect(() => {
+    if (typeof formData?.servicesId && formData.servicesId.length > 0)
+      setValues(formData.servicesId);
+  }, []);
+
   const _renderLabel = (text: string, styles?: string) => (
     <div className={styles}>{text}</div>
   );
@@ -117,6 +122,7 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
               label="Mantenimiento"
               placeholder="Seleccione el mantenimiento"
               onChange={handleMaintenanceChange}
+              selectedKeys={[String(formData.maintenanceId)]}
             >
               {maintenances.map((maintenance) => (
                 <SelectItem key={maintenance.id}>
