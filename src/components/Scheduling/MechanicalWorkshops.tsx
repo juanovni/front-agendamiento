@@ -29,6 +29,7 @@ const MechanicalWorkshops = ({
   const [mechanicalWorkshops, setMechanicalWorkshops] = useState<
     MechanicalWorkshops[]
   >([]);
+  const [mechanicalValue, setMechanicalValue] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [cities, setCities] = useState<string[]>([]);
@@ -70,6 +71,11 @@ const MechanicalWorkshops = ({
     fetchMechanicalWorkshops(e.target.value, (res) => {
       setMechanicalWorkshops(res);
     });
+  };
+
+  const handleMechanicalClick = (mechanicId: string) => {
+    setMechanicalValue(mechanicId);
+    updateFormData({ mechanicId });
   };
 
   const showNextButton = () => {
@@ -125,44 +131,56 @@ const MechanicalWorkshops = ({
               </div>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 m-2">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 m-2">
               {mechanicalWorkshops.map((mechanicalWorkshop) => (
-                <Card key={mechanicalWorkshop.id} className=" cursor-pointer ">
-                  <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-                    <h4 className="font-bold text-large">
-                      {mechanicalWorkshop.nombre}
-                    </h4>
-                    <small className="text-default-500">
-                      {mechanicalWorkshop.ciudad}
-                    </small>
-                    <div className="flex items-center justify-center self-center m-4">
-                      <Image
-                        className="w-full h-32 object-contain"
-                        alt="HeroUI hero Image"
-                        src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG5XWyGxaf9B5Fj1LX-JjK_QaEuLmoeP3NUg&s"
-                      />
-                    </div>
-                  </CardHeader>
-                  <CardBody className="overflow-visible py-2">
-                    {_renderLabel(
-                      mechanicalWorkshop.direccion,
-                      "uppercase ml-6"
-                    )}
-                    {_renderLabel(
-                      mechanicalWorkshop.telefono,
-                      "uppercase ml-6"
-                    )}
-                    <div className="ml-10 py-2 mb-4">
-                      <ul className="list-disc">
-                        {mechanicalWorkshop?.mantenimientos.map(
-                          ({ id, nombre }) => (
-                            <li key={id}>{nombre}</li>
-                          )
-                        )}
-                      </ul>
-                    </div>
-                  </CardBody>
-                </Card>
+                <div
+                  key={mechanicalWorkshop.id}
+                  onClick={(e) => handleMechanicalClick(mechanicalWorkshop.id)}
+                >
+                  <Card
+                    className={`cursor-pointer min-h-[440px] hover:shadow-xl ${
+                      mechanicalValue == parseInt(mechanicalWorkshop.id)
+                        ? "border-3 border-orange-400"
+                        : ""
+                    }`}
+                  >
+                    <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
+                      <h4 className="font-bold text-large">
+                        {mechanicalWorkshop.nombre}
+                      </h4>
+                      <small className="text-default-500">
+                        {mechanicalWorkshop.ciudad}
+                      </small>
+                      <div className="flex items-center justify-center self-center m-4">
+                        <Image
+                          isBlurred
+                          className="w-full h-32 object-contain"
+                          alt="DGMotors"
+                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG5XWyGxaf9B5Fj1LX-JjK_QaEuLmoeP3NUg&s"
+                        />
+                      </div>
+                    </CardHeader>
+                    <CardBody className="overflow-visible py-2">
+                      {_renderLabel(
+                        mechanicalWorkshop.direccion,
+                        "uppercase ml-6 py-1"
+                      )}
+                      {_renderLabel(
+                        mechanicalWorkshop.telefono,
+                        "uppercase ml-6 py-1"
+                      )}
+                      <div className="ml-10 py-2 mb-4">
+                        <ul className="list-disc">
+                          {mechanicalWorkshop?.mantenimientos.map(
+                            ({ id, nombre }) => (
+                              <li key={id}>{nombre}</li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    </CardBody>
+                  </Card>
+                </div>
               ))}
             </div>
           </CardBody>
