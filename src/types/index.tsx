@@ -10,9 +10,17 @@ interface Vehicle {
   propietario: string;
   email: string;
   telefono: string;
+  marca: { id: number };
+  modelo: { id: number };
 }
 
 interface Brand {
+  id: string;
+  nombre: string;
+  estado: string;
+}
+
+interface Maintenance {
   id: string;
   nombre: string;
   estado: string;
@@ -31,7 +39,7 @@ interface MechanicalWorkshops {
   ciudad: string;
   telefono: string;
   direccion: string;
-  mantenimientos:[]
+  mantenimientos: [];
 }
 
 interface ApiResponse<T> {

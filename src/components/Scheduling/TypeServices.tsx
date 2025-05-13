@@ -12,6 +12,7 @@ import {
 import { getServices } from "../../services/TypesServcies";
 import { VehicleIcon } from "../Icons/VehicleIcon";
 import texts from "../../util/text";
+import { getMaintenances } from "../../services/maintenanceService";
 
 interface Props {
   formData: any;
@@ -21,6 +22,7 @@ interface Props {
 }
 
 const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
+  const [maintenances, setMaintenances] = useState<Services[]>([]);
   const [services, setServices] = useState<Services[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -28,7 +30,7 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
 
   useEffect(() => {
     fetchServices();
-    console.log(formData);
+    fetchMaintenance();
   }, []);
 
   const _renderLabel = (text: string, styles?: string) => (
@@ -45,8 +47,21 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
     }
     setLoading(false);
   };
+  const fetchMaintenance = async () => {
+    const response = await getMaintenances();
+    if (response.success && response.data) {
+      setMaintenances(response?.data);
+      setError(null);
+    } else {
+      setError(response.error || "Error al obtener los servicios");
+    }
+    setLoading(false);
+  };
   const handleMaintenanceChange = (e: ChangeEvent<HTMLInputElement>) => {
-    updateFormData({ services: e.target.value });
+    updateFormData({ maintenanceId: e.target.value });
+  };
+  const handleServicesChange = (e: ChangeEvent<HTMLInputElement>) => {
+    updateFormData({ servicesId: e.target.value });
   };
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     updateFormData({ observation: e.target.value });
@@ -99,12 +114,24 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
           <div className="w-full md:w-[50%]">
             <Select
               className="mb-4"
-              label="Plan de mantenimiento"
-              placeholder="Seleccione uno varios servicios"
+              label="Mantenimiento"
+              placeholder="Seleccione el mantenimiento"
+              onChange={handleMaintenanceChange}
+            >
+              {maintenances.map((maintenance) => (
+                <SelectItem key={maintenance.id}>
+                  {maintenance.nombre}
+                </SelectItem>
+              ))}
+            </Select>
+            <Select
+              className="mb-4"
+              label="Correctivos"
+              placeholder="Seleccione uno varios correctivos"
               selectedKeys={values}
               selectionMode="multiple"
               onSelectionChange={setValues}
-              onChange={handleMaintenanceChange}
+              onChange={handleServicesChange}
             >
               {services.map((service) => (
                 <SelectItem key={service.id}>{service.nombre}</SelectItem>
@@ -113,9 +140,7 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
             <Textarea
               label="Solicitud de servicio"
               placeholder="Obervación"
-              description={
-                "Ingrese el kilometraje actual del vehículo, así como los servicios solicitados"
-              }
+              description={"Ingrese los servicios solicitados"}
               onChange={handleChange}
               value={formData.observation}
             />

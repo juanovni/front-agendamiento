@@ -14,7 +14,8 @@ function App() {
     email: "",
     phone: "",
     observation: "",
-    services: "",
+    servicesId: "",
+    maintenanceId: "",
   });
 
   const next = () => setStep((prev) => prev + 1);

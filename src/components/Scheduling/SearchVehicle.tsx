@@ -15,6 +15,7 @@ import { getVehicleInfoByPlate } from "../../services/vechicleService";
 import { getModelsByBrand } from "../../services/modelService";
 import { getBrands } from "../../services/brandService";
 import texts from "../../util/text";
+import Swal from "sweetalert2";
 
 const initialValues = {
   fields: [
@@ -37,7 +38,7 @@ const initialValues = {
       label: "Teléfono",
       placeholder: "",
       description: "Ingrese su número de teléfono",
-      type: "email",
+      type: "text",
     },
   ],
 };
@@ -48,6 +49,15 @@ interface Props {
   next: () => void;
 }
 
+const initialFormState = {
+  plate: "",
+  brandId: "",
+  modelId: "",
+  name: "",
+  email: "",
+  phone: "",
+};
+
 const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   const [plateInput, setPlateInput] = useState("");
   const [brands, setBrands] = useState<Brand[]>([]);
@@ -55,12 +65,38 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
+  const showAlert = (title: string, text: string, icon: string) => {
+    Swal.fire({
+      title,
+      text,
+      icon: "warning",
+      confirmButtonText: "Aceptar",
+    });
+  };
+
   useEffect(() => {
     fetchBrands();
   }, []);
 
   const handleSearchVehicle = () => {
-    if (plateInput.length > 4) fetchVehicleInfo(plateInput);
+    if (plateInput.length > 4)
+      fetchVehicleInfo(
+        plateInput,
+        ({ propietario, email, telefono, marca, modelo }) => {
+          fetchModels(marca?.id);
+          updateFormData({
+            name: propietario,
+            email: email,
+            phone: telefono,
+            brandId: marca?.id,
+            modelId: modelo?.id,
+          });
+        }
+      );
+  };
+
+  const resetForm = () => {
+    updateFormData(initialFormState);
   };
 
   const handleBrandChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -88,21 +124,23 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   };
 
   const handleNext = () => {
-    console.log(formData);
     next();
   };
 
-  const fetchVehicleInfo = async (plateInfo: string) => {
+  const fetchVehicleInfo = async (
+    plateInfo: string,
+    callback: (data: Vehicle) => void
+  ) => {
     const response = await getVehicleInfoByPlate(plateInfo);
     if (response.success && response.data) {
-      const { propietario, email, telefono } = response.data;
-      setError(null);
-      updateFormData({
-        name: propietario,
-        email: email,
-        phone: telefono,
-      });
+      if (callback) callback(response.data);
     } else {
+      resetForm();
+      showAlert(
+        "Atención!",
+        "La placa digitada no existe en el sistema, para continuar agendando una cita complete el formulario.",
+        "warning"
+      );
       setError(response.error || "Error al obtener marcas");
     }
     setLoading(false);
@@ -134,6 +172,18 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
     <div className={styles}>{text}</div>
   );
 
+  const showNextButton = () => {
+    if (
+      !formData.plate ||
+      !formData.name ||
+      !formData.email ||
+      !formData.phone
+    ) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <Card className="m-auto max-w-6xl">
       <CardHeader className="bg-black">
@@ -151,7 +201,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
             onPress={handleNext}
             className="font-bold bg-black text-white"
             size="md"
-            isDisabled={!formData.plate || !formData.name || !formData.email}
+            isDisabled={showNextButton()}
           >
             Siguiente
           </Button>
@@ -200,6 +250,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
               isRequired
               placeholder="Seleccione una marca"
               onChange={handleBrandChange}
+              selectedKeys={[String(formData.brandId)]}
             >
               {brands.map((brand) => (
                 <SelectItem key={brand.id}>{brand.nombre}</SelectItem>
@@ -211,6 +262,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
               isRequired
               placeholder="Seleccione una modelo"
               onChange={handleModelChange}
+              selectedKeys={[String(formData.modelId)]}
             >
               {models.map((model) => (
                 <SelectItem key={model.id}>{model.nombre}</SelectItem>

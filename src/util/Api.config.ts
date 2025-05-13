@@ -18,4 +18,7 @@ export const routes = {
   mechanicalWorkshops: {
     all: "/v1/mechanical_workshops",
   },
+  maintenance: {
+    all: "/v1/maintenances",
+  },
 };
