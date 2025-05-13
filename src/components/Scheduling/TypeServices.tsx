@@ -54,7 +54,7 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
 
   return (
     <Card className="m-auto max-w-6xl">
-      <CardHeader className="bg-orange-600">
+      <CardHeader className="bg-black">
         <div className="flex justify-center gap-2 items-center">
           <VehicleIcon />
           <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
@@ -117,6 +117,7 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
                 "Ingrese el kilometraje actual del vehículo, así como los servicios solicitados"
               }
               onChange={handleChange}
+              value={formData.observation}
             />
           </div>
         </div>

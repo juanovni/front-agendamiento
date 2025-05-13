@@ -49,10 +49,9 @@ interface Props {
 }
 
 const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
-  const [plateInput, setPlateInput] = useState("GTH4599");
+  const [plateInput, setPlateInput] = useState("");
   const [brands, setBrands] = useState<Brand[]>([]);
   const [models, setModels] = useState<Model[]>([]);
-  //const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -97,7 +96,6 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
     const response = await getVehicleInfoByPlate(plateInfo);
     if (response.success && response.data) {
       const { propietario, email, telefono } = response.data;
-      //setVehicle(response.data);
       setError(null);
       updateFormData({
         name: propietario,
@@ -138,7 +136,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
 
   return (
     <Card className="m-auto max-w-6xl">
-      <CardHeader className="bg-orange-600">
+      <CardHeader className="bg-black">
         <div className="flex justify-center gap-2 items-center">
           <VehicleIcon />
           <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
@@ -161,13 +159,14 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
         <div className="flex justify-center gap-4 items-center">
           <div className="w-full md:w-80">
             <Input
+              isRequired
               startContent={<SearchIcon />}
               label="Placa"
               labelPlacement="outside"
               placeholder="GNY0123"
               description="Ingrese la placa del vehículo"
               size="lg"
-              value={plateInput}
+              value={formData.plate}
               onChange={handlePlateChange}
             />
           </div>
@@ -208,7 +207,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
             </Select>
             <Select
               label="Modelo"
-              size="md"
+              size="sm"
               isRequired
               placeholder="Seleccione una modelo"
               onChange={handleModelChange}
@@ -225,13 +224,10 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
                   isRequired
                   key={field.id}
                   name={field.id}
-                  labelPlacement="outside"
                   label={field.label}
-                  placeholder={field.placeholder}
-                  description={field.description}
+                  placeholder={field.description}
                   type={field.type}
-                  size="lg"
-                  radius="sm"
+                  size="md"
                   value={formData[field?.id]}
                   onChange={handleChange}
                 />
