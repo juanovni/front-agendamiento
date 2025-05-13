@@ -1,0 +1,247 @@
+import { useEffect, useState, ChangeEvent } from "react";
+import {
+  Card,
+  CardBody,
+  Divider,
+  Button,
+  Input,
+  Select,
+  SelectItem,
+  CardHeader,
+} from "@heroui/react";
+import { SearchIcon } from "../Icons/SearchIcon";
+import { VehicleIcon } from "../Icons/VehicleIcon";
+import { getVehicleInfoByPlate } from "../../services/vechicleService";
+import { getModelsByBrand } from "../../services/modelService";
+import { getBrands } from "../../services/brandService";
+import texts from "../../util/text";
+
+const initialValues = {
+  fields: [
+    {
+      id: "name",
+      label: "Nombres Completos",
+      placeholder: "",
+      description: "Ingrese su nombre completo",
+      type: "text",
+    },
+    {
+      id: "email",
+      label: "Email",
+      placeholder: "",
+      description: "Ingrese su correo completo",
+      type: "email",
+    },
+    {
+      id: "phone",
+      label: "Teléfono",
+      placeholder: "",
+      description: "Ingrese su número de teléfono",
+      type: "email",
+    },
+  ],
+};
+
+interface Props {
+  formData: any;
+  updateFormData: (data: Partial<any>) => void;
+  next: () => void;
+}
+
+const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
+  const [plateInput, setPlateInput] = useState("GTH4599");
+  const [brands, setBrands] = useState<Brand[]>([]);
+  const [models, setModels] = useState<Model[]>([]);
+  //const [vehicle, setVehicle] = useState<Vehicle | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetchBrands();
+  }, []);
+
+  const handleSearchVehicle = () => {
+    if (plateInput.length > 4) fetchVehicleInfo(plateInput);
+  };
+
+  const handleBrandChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    let brandId = e.target.value;
+    if (brandId) {
+      fetchModels(parseInt(brandId));
+      updateFormData({ brandId });
+    }
+  };
+
+  const handleModelChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    let modelId = e.target.value;
+    if (modelId) {
+      updateFormData({ modelId });
+    }
+  };
+
+  const handlePlateChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setPlateInput(e.target.value);
+    updateFormData({ plate: e.target.value });
+  };
+
+  const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    updateFormData({ [e.target.name]: e.target.value });
+  };
+
+  const handleNext = () => {
+    console.log(formData);
+    next();
+  };
+
+  const fetchVehicleInfo = async (plateInfo: string) => {
+    const response = await getVehicleInfoByPlate(plateInfo);
+    if (response.success && response.data) {
+      const { propietario, email, telefono } = response.data;
+      //setVehicle(response.data);
+      setError(null);
+      updateFormData({
+        name: propietario,
+        email: email,
+        phone: telefono,
+      });
+    } else {
+      setError(response.error || "Error al obtener marcas");
+    }
+    setLoading(false);
+  };
+
+  const fetchBrands = async () => {
+    const response = await getBrands();
+    if (response.success && response.data) {
+      setBrands(response?.data);
+      setError(null);
+    } else {
+      setError(response.error || "Error al obtener marcas");
+    }
+    setLoading(false);
+  };
+
+  const fetchModels = async (brandId: number) => {
+    const response = await getModelsByBrand(brandId);
+    if (response.success && response.data) {
+      setModels(response?.data);
+      setError(null);
+    } else {
+      setError(response.error || "Error al obtener marcas");
+    }
+    setLoading(false);
+  };
+
+  const _renderLabel = (text: string, styles?: string) => (
+    <div className={styles}>{text}</div>
+  );
+
+  return (
+    <Card className="m-auto max-w-6xl">
+      <CardHeader className="bg-orange-600">
+        <div className="flex justify-center gap-2 items-center">
+          <VehicleIcon />
+          <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
+            {texts.BUSINESS.project}
+          </h1>
+        </div>
+      </CardHeader>
+      <Divider />
+      <CardBody>
+        <div className="w-full flex justify-end pr-4">
+          <Button
+            onPress={handleNext}
+            className="font-bold bg-black text-white"
+            size="md"
+            isDisabled={!formData.plate || !formData.name || !formData.email}
+          >
+            Siguiente
+          </Button>
+        </div>
+        <div className="flex justify-center gap-4 items-center">
+          <div className="w-full md:w-80">
+            <Input
+              startContent={<SearchIcon />}
+              label="Placa"
+              labelPlacement="outside"
+              placeholder="GNY0123"
+              description="Ingrese la placa del vehículo"
+              size="lg"
+              value={plateInput}
+              onChange={handlePlateChange}
+            />
+          </div>
+          <div>
+            <Button
+              isIconOnly
+              className="bg-orange-600 hover:bg-orange-600 text-white p-2 rounded-full shadow-md"
+              onPress={handleSearchVehicle}
+            >
+              <SearchIcon />
+            </Button>
+          </div>
+        </div>
+
+        <div className="mt-2 ml-4">
+          {_renderLabel(
+            "Información del vehículo",
+            "text-xl font-medium tracking-tight text-gray-950"
+          )}
+          {_renderLabel(
+            "Continue con el agendamiento de la cita, diligenciando los campos",
+            "font-light text-sm"
+          )}
+        </div>
+
+        <div className="flex flex-col gap-4 p-4">
+          <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+            <Select
+              label="Marca"
+              size="sm"
+              isRequired
+              placeholder="Seleccione una marca"
+              onChange={handleBrandChange}
+            >
+              {brands.map((brand) => (
+                <SelectItem key={brand.id}>{brand.nombre}</SelectItem>
+              ))}
+            </Select>
+            <Select
+              label="Modelo"
+              size="md"
+              isRequired
+              placeholder="Seleccione una modelo"
+              onChange={handleModelChange}
+            >
+              {models.map((model) => (
+                <SelectItem key={model.id}>{model.nombre}</SelectItem>
+              ))}
+            </Select>
+          </div>
+          <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+            {initialValues.fields.map((field) => {
+              return (
+                <Input
+                  isRequired
+                  key={field.id}
+                  name={field.id}
+                  labelPlacement="outside"
+                  label={field.label}
+                  placeholder={field.placeholder}
+                  description={field.description}
+                  type={field.type}
+                  size="lg"
+                  radius="sm"
+                  value={formData[field?.id]}
+                  onChange={handleChange}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </CardBody>
+    </Card>
+  );
+};
+
+export default SearhVehicle;

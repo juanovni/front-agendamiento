@@ -8,9 +8,7 @@ const Layout = ({ children }: Props) => {
   return (
     <>
       <Nav />
-      <div className="mx-auto max-w-6xl py-32 sm:py-48 lg:py-12">
-        <div className="text-center">{children}</div>
-      </div>
+      <div className="mx-auto py-6 lg:py-10">{children}</div>
     </>
   );
 };

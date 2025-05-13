@@ -1,18 +1,6 @@
 import { apiRequest } from "../api/apiClient";
 import { routes } from "../util/Api.config";
 
-interface Brand {
-  id: string;
-  nombre: string;
-  estado: string;
-}
-
-interface ApiResponse<T> {
-  success: boolean;
-  data?: T,
-  error?: string;
-}
-
 export const getBrands = async (): Promise<ApiResponse<Brand[]>> => {
   try {
     const response = await apiRequest<{ data: Brand[] }>(

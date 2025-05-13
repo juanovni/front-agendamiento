@@ -1,17 +1,15 @@
 import { apiRequest } from "../api/apiClient";
 import { routes } from "../util/Api.config";
 
-export const getVehicleInfoByPlate = async (
-  plateId: string
-): Promise<ApiResponse<Vehicle>> => {
+export const getServices = async (): Promise<ApiResponse<Services[]>> => {
   try {
-    const response = await apiRequest<{ data: Vehicle }>(
+    const response = await apiRequest<{ data: Services[] }>(
       "get",
-      routes.vehicle.searchByPlate + `/${plateId}`
+      routes.services.all
     );
     return { success: true, data: response?.data };
   } catch (error) {
-    console.error("Error fetching vehicle:", error);
+    console.error("Error fetching services:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Error desconocido",
