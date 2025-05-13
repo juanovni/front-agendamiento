@@ -185,110 +185,113 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   };
 
   return (
-    <Card className="m-auto max-w-6xl">
-      <CardHeader className="bg-black">
-        <div className="flex justify-center gap-2 items-center">
-          <VehicleIcon />
-          <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
-            {texts.BUSINESS.project}
-          </h1>
-        </div>
-      </CardHeader>
-      <Divider />
-      <CardBody>
-        <div className="w-full flex justify-end pr-4">
-          <Button
-            onPress={handleNext}
-            className="font-bold bg-black text-white"
-            size="md"
-            isDisabled={showNextButton()}
-          >
-            Siguiente
-          </Button>
-        </div>
-        <div className="flex justify-center gap-4 items-center">
-          <div className="w-full md:w-80">
-            <Input
-              isRequired
-              startContent={<SearchIcon />}
-              label="Placa"
-              labelPlacement="outside"
-              placeholder="GNY0123"
-              description="Ingrese la placa del vehículo"
-              size="lg"
-              value={formData.plate}
-              onChange={handlePlateChange}
-            />
+    <>
+      <div className="w-full flex justify-end pr-4 mb-4">
+        <Button
+          onPress={handleNext}
+          className="font-bold bg-black text-white"
+          size="lg"
+          radius="sm"
+          isDisabled={showNextButton()}
+        >
+          Siguiente
+        </Button>
+      </div>
+      <Card className="m-auto max-w-6xl">
+        <CardHeader className="bg-black">
+          <div className="flex justify-center gap-2 items-center">
+            <VehicleIcon />
+            <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
+              {texts.BUSINESS.project}
+            </h1>
           </div>
-          <div>
-            <Button
-              isIconOnly
-              className="bg-orange-600 hover:bg-orange-600 text-white p-2 rounded-full shadow-md"
-              onPress={handleSearchVehicle}
-            >
-              <SearchIcon />
-            </Button>
+        </CardHeader>
+        <Divider />
+        <CardBody>
+          <div className="flex justify-center gap-4 items-center">
+            <div className="w-full md:w-80">
+              <Input
+                isRequired
+                startContent={<SearchIcon />}
+                label="Placa"
+                labelPlacement="outside"
+                placeholder="GNY0123"
+                description="Ingrese la placa del vehículo"
+                size="lg"
+                value={formData.plate}
+                onChange={handlePlateChange}
+              />
+            </div>
+            <div>
+              <Button
+                isIconOnly
+                className="bg-orange-600 hover:bg-orange-600 text-white p-2 rounded-full shadow-md"
+                onPress={handleSearchVehicle}
+              >
+                <SearchIcon />
+              </Button>
+            </div>
           </div>
-        </div>
 
-        <div className="mt-2 ml-4">
-          {_renderLabel(
-            "Información del vehículo",
-            "text-xl font-medium tracking-tight text-gray-950"
-          )}
-          {_renderLabel(
-            "Continue con el agendamiento de la cita, diligenciando los campos",
-            "font-light text-sm"
-          )}
-        </div>
+          <div className="mt-2 ml-4">
+            {_renderLabel(
+              "Información del vehículo",
+              "text-xl font-medium tracking-tight text-gray-950"
+            )}
+            {_renderLabel(
+              "Continue con el agendamiento de la cita, diligenciando los campos",
+              "font-light text-sm"
+            )}
+          </div>
 
-        <div className="flex flex-col gap-4 p-4">
-          <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-            <Select
-              label="Marca"
-              size="sm"
-              isRequired
-              placeholder="Seleccione una marca"
-              onChange={handleBrandChange}
-              selectedKeys={[String(formData.brandId)]}
-            >
-              {brands.map((brand) => (
-                <SelectItem key={brand.id}>{brand.nombre}</SelectItem>
-              ))}
-            </Select>
-            <Select
-              label="Modelo"
-              size="sm"
-              isRequired
-              placeholder="Seleccione una modelo"
-              onChange={handleModelChange}
-              selectedKeys={[String(formData.modelId)]}
-            >
-              {models.map((model) => (
-                <SelectItem key={model.id}>{model.nombre}</SelectItem>
-              ))}
-            </Select>
+          <div className="flex flex-col gap-4 p-4">
+            <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+              <Select
+                label="Marca"
+                size="sm"
+                isRequired
+                placeholder="Seleccione una marca"
+                onChange={handleBrandChange}
+                selectedKeys={[String(formData.brandId)]}
+              >
+                {brands.map((brand) => (
+                  <SelectItem key={brand.id}>{brand.nombre}</SelectItem>
+                ))}
+              </Select>
+              <Select
+                label="Modelo"
+                size="sm"
+                isRequired
+                placeholder="Seleccione una modelo"
+                onChange={handleModelChange}
+                selectedKeys={[String(formData.modelId)]}
+              >
+                {models.map((model) => (
+                  <SelectItem key={model.id}>{model.nombre}</SelectItem>
+                ))}
+              </Select>
+            </div>
+            <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+              {initialValues.fields.map((field) => {
+                return (
+                  <Input
+                    isRequired
+                    key={field.id}
+                    name={field.id}
+                    label={field.label}
+                    placeholder={field.description}
+                    type={field.type}
+                    size="md"
+                    value={formData[field?.id]}
+                    onChange={handleChange}
+                  />
+                );
+              })}
+            </div>
           </div>
-          <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-            {initialValues.fields.map((field) => {
-              return (
-                <Input
-                  isRequired
-                  key={field.id}
-                  name={field.id}
-                  label={field.label}
-                  placeholder={field.description}
-                  type={field.type}
-                  size="md"
-                  value={formData[field?.id]}
-                  onChange={handleChange}
-                />
-              );
-            })}
-          </div>
-        </div>
-      </CardBody>
-    </Card>
+        </CardBody>
+      </Card>
+    </>
   );
 };
 

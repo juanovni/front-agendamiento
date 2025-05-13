@@ -24,7 +24,7 @@ const MechanicalWorkshops = ({
 
   useEffect(() => {
     fetchMechanicalWorkshops();
-    console.log(formData)
+    console.log(formData);
   }, []);
 
   const fetchMechanicalWorkshops = async () => {
@@ -51,7 +51,7 @@ const MechanicalWorkshops = ({
             onPress={prev}
             variant="shadow"
             className="font-semibold bg-black text-white"
-            size="md"
+            size="lg"
           >
             Anterior
           </Button>
@@ -59,13 +59,13 @@ const MechanicalWorkshops = ({
             onPress={next}
             variant="shadow"
             className="font-semibold bg-black text-white"
-            size="md"
+            size="lg"
           >
             Siguiente
           </Button>
         </div>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-2">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-6">
         {mechanicalWorkshops.map((mechanicalWorkshop) => (
           <Card key={mechanicalWorkshop.id} className=" cursor-pointer ">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">

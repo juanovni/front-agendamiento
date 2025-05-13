@@ -73,87 +73,79 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
   };
 
   return (
-    <Card className="m-auto max-w-6xl">
-      <CardHeader className="bg-black">
-        <div className="flex justify-center gap-2 items-center">
-          <VehicleIcon />
-          <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
-            {texts.BUSINESS.project}
-          </h1>
+    <>
+      <div className="flex justify-between pr-4 mb-4">
+        <div></div>
+        <div className="flex justify-end gap-2">
+          <Button
+            onPress={prev}
+            variant="shadow"
+            className="font-semibold bg-black text-white"
+            size="lg"
+          >
+            Anterior
+          </Button>
+          <Button
+            onPress={next}
+            variant="shadow"
+            className="font-semibold bg-black text-white"
+            size="lg"
+          >
+            Siguiente
+          </Button>
         </div>
-      </CardHeader>
-      <Divider />
-      <CardBody>
-        <div className="flex justify-between pr-4 mb-4">
-          <div className="mt-2 ml-4">
-            {_renderLabel(
-              "Servicios",
-              "text-xl font-medium tracking-tight text-gray-950"
-            )}
-            {_renderLabel(
-              "Seleccione los servicios a realizar",
-              "font-light text-sm"
-            )}
+      </div>
+      <Card className="m-auto max-w-6xl">
+        <CardHeader className="bg-black">
+          <div className="flex justify-center gap-2 items-center">
+            <VehicleIcon />
+            <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
+              {texts.BUSINESS.project}
+            </h1>
           </div>
-          <div className="flex justify-end gap-2">
-            <Button
-              onPress={prev}
-              variant="shadow"
-              className="font-semibold bg-black text-white"
-              size="md"
-            >
-              Anterior
-            </Button>
-            <Button
-              onPress={next}
-              variant="shadow"
-              className="font-semibold bg-black text-white"
-              size="md"
-            >
-              Siguiente
-            </Button>
+        </CardHeader>
+        <Divider />
+        <CardBody>
+          <div className="flex justify-center gap-4 items-center p-2">
+            <div className="w-full md:w-[50%]">
+              <Select
+                className="mb-4"
+                label="Mantenimiento"
+                placeholder="Seleccione el mantenimiento"
+                onChange={handleMaintenanceChange}
+                selectedKeys={[String(formData.maintenanceId)]}
+              >
+                {maintenances.map((maintenance) => (
+                  <SelectItem key={maintenance.id}>
+                    {maintenance.nombre}
+                  </SelectItem>
+                ))}
+              </Select>
+              <Select
+                className="mb-4"
+                label="Correctivos"
+                placeholder="Seleccione uno varios correctivos"
+                selectedKeys={values}
+                selectionMode="multiple"
+                onSelectionChange={setValues}
+                onChange={handleServicesChange}
+              >
+                {services.map((service) => (
+                  <SelectItem key={service.id}>{service.nombre}</SelectItem>
+                ))}
+              </Select>
+              <Textarea
+                label="Solicitud de servicio"
+                placeholder="Obervación"
+                description={"Ingrese los servicios solicitados"}
+                onChange={handleChange}
+                value={formData.observation}
+              />
+            </div>
           </div>
-        </div>
-
-        <div className="flex justify-center gap-4 items-center p-2">
-          <div className="w-full md:w-[50%]">
-            <Select
-              className="mb-4"
-              label="Mantenimiento"
-              placeholder="Seleccione el mantenimiento"
-              onChange={handleMaintenanceChange}
-              selectedKeys={[String(formData.maintenanceId)]}
-            >
-              {maintenances.map((maintenance) => (
-                <SelectItem key={maintenance.id}>
-                  {maintenance.nombre}
-                </SelectItem>
-              ))}
-            </Select>
-            <Select
-              className="mb-4"
-              label="Correctivos"
-              placeholder="Seleccione uno varios correctivos"
-              selectedKeys={values}
-              selectionMode="multiple"
-              onSelectionChange={setValues}
-              onChange={handleServicesChange}
-            >
-              {services.map((service) => (
-                <SelectItem key={service.id}>{service.nombre}</SelectItem>
-              ))}
-            </Select>
-            <Textarea
-              label="Solicitud de servicio"
-              placeholder="Obervación"
-              description={"Ingrese los servicios solicitados"}
-              onChange={handleChange}
-              value={formData.observation}
-            />
-          </div>
-        </div>
-      </CardBody>
-    </Card>
+        </CardBody>
+      </Card>
+    </>
   );
 };
 
