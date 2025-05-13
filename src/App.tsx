@@ -16,6 +16,7 @@ function App() {
     observation: "",
     servicesId: "",
     maintenanceId: "",
+    mechanicId: "",
   });
 
   const next = () => setStep((prev) => prev + 1);

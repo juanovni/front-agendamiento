@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Card, CardHeader, CardBody, Divider, Button } from "@heroui/react";
 import { getMechanicalWorkshops } from "../../services/mechanicalWorkshops";
+import ButtonElement from "../Elements/ButtonElement";
 
 interface Props {
   formData: any;
@@ -42,30 +43,24 @@ const MechanicalWorkshops = ({
     <div className="text-tiny uppercase font-bold mb-2">{text}</div>
   );
 
+  const showNextButton = () => {
+    if (!formData.mechanicId) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <div>
-      <div className="flex justify-between pr-4 mb-4">
-        <div></div>
-        <div className="flex justify-end gap-2">
-          <Button
-            onPress={prev}
-            variant="shadow"
-            className="font-semibold bg-black text-white"
-            size="lg"
-          >
-            Anterior
-          </Button>
-          <Button
-            onPress={next}
-            variant="shadow"
-            className="font-semibold bg-black text-white"
-            size="lg"
-          >
-            Siguiente
-          </Button>
-        </div>
+      <div className="w-full flex justify-end gap-2 pr-4 mb-4">
+        <ButtonElement label="Anterior" onPress={prev} />
+        <ButtonElement
+          label="Siguiente"
+          onPress={next}
+          isDisabled={showNextButton()}
+        />
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4 p-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 gap-4 p-6">
         {mechanicalWorkshops.map((mechanicalWorkshop) => (
           <Card key={mechanicalWorkshop.id} className=" cursor-pointer ">
             <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">

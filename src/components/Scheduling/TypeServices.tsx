@@ -13,6 +13,7 @@ import { getServices } from "../../services/TypesServcies";
 import { VehicleIcon } from "../Icons/VehicleIcon";
 import texts from "../../util/text";
 import { getMaintenances } from "../../services/maintenanceService";
+import ButtonElement from "../Elements/ButtonElement";
 
 interface Props {
   formData: any;
@@ -68,32 +69,27 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
   const handleServicesChange = (e: ChangeEvent<HTMLInputElement>) => {
     updateFormData({ servicesId: e.target.value });
   };
+
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     updateFormData({ observation: e.target.value });
   };
 
+  const showNextButton = () => {
+    if (!formData.maintenanceId || !formData.observation) {
+      return true;
+    }
+    return false;
+  };
+
   return (
     <>
-      <div className="flex justify-between pr-4 mb-4">
-        <div></div>
-        <div className="flex justify-end gap-2">
-          <Button
-            onPress={prev}
-            variant="shadow"
-            className="font-semibold bg-black text-white"
-            size="lg"
-          >
-            Anterior
-          </Button>
-          <Button
-            onPress={next}
-            variant="shadow"
-            className="font-semibold bg-black text-white"
-            size="lg"
-          >
-            Siguiente
-          </Button>
-        </div>
+      <div className="w-full flex justify-end gap-2 pr-4 mb-4">
+        <ButtonElement label="Anterior" onPress={prev} />
+        <ButtonElement
+          label="Siguiente"
+          onPress={next}
+          isDisabled={showNextButton()}
+        />
       </div>
       <Card className="m-auto max-w-6xl">
         <CardHeader className="bg-black">
@@ -106,8 +102,20 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
         </CardHeader>
         <Divider />
         <CardBody>
+          <div className="flex justify-start pr-4 mb-4">
+            <div className="mt-2 ml-4">
+              {_renderLabel(
+                "Servicios",
+                "text-xl font-medium tracking-tight text-gray-950"
+              )}
+              {_renderLabel(
+                "Seleccione los servicios a realizar",
+                "font-light text-sm"
+              )}
+            </div>
+          </div>
           <div className="flex justify-center gap-4 items-center p-2">
-            <div className="w-full md:w-[50%]">
+            <div className="w-full md:w-[60%]">
               <Select
                 className="mb-4"
                 label="Mantenimiento"
@@ -135,9 +143,12 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
                 ))}
               </Select>
               <Textarea
+                isRequired
                 label="Solicitud de servicio"
                 placeholder="Obervación"
-                description={"Ingrese los servicios solicitados"}
+                description={
+                  "Describa que servicios requiere (por ejemplo, mantenimiento preventivo, revisión de frenos, alineación y balanceo, entre otros)."
+                }
                 onChange={handleChange}
                 value={formData.observation}
               />

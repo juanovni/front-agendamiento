@@ -16,6 +16,7 @@ import { getModelsByBrand } from "../../services/modelService";
 import { getBrands } from "../../services/brandService";
 import texts from "../../util/text";
 import Swal from "sweetalert2";
+import ButtonElement from "../Elements/ButtonElement";
 
 const initialValues = {
   fields: [
@@ -64,6 +65,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   const [models, setModels] = useState<Model[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
+  const [showDetails, setShowDetails] = useState<boolean>(false);
 
   const showAlert = (title: string, text: string, icon: string) => {
     Swal.fire({
@@ -143,6 +145,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
       );
       setError(response.error || "Error al obtener marcas");
     }
+    setShowDetails(true);
     setLoading(false);
   };
 
@@ -187,15 +190,11 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   return (
     <>
       <div className="w-full flex justify-end pr-4 mb-4">
-        <Button
+        <ButtonElement
+          label="Siguiente"
           onPress={handleNext}
-          className="font-bold bg-black text-white"
-          size="lg"
-          radius="sm"
           isDisabled={showNextButton()}
-        >
-          Siguiente
-        </Button>
+        />
       </div>
       <Card className="m-auto max-w-6xl">
         <CardHeader className="bg-black">
