@@ -1,5 +1,6 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import {
+  addToast,
   Card,
   CardHeader,
   CardBody,
@@ -74,12 +75,22 @@ const MechanicalWorkshops = ({
   };
 
   const handleMechanicalClick = (mechanicId: number) => {
+    const mechanicalWorkshopSelected = mechanicalWorkshops.find(
+      (m) => parseInt(m.id) == mechanicId
+    );
+    const mechanicalName = mechanicalWorkshopSelected?.nombre;
+    addToast({
+      title: "Taller!",
+      description: mechanicalName,
+      timeout: 1000,
+      shouldShowTimeoutProgress: true,
+    });
+
     setMechanicalValue(mechanicId);
     updateFormData({ mechanicId });
   };
 
   const showNextButton = () => {
-    console.log(formData)
     if (!formData.mechanicId) {
       return true;
     }
