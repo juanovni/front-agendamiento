@@ -5,6 +5,12 @@ import TypeServices from "./components/Scheduling/TypeServices";
 import MechanicalWorkshops from "./components/Scheduling/MechanicalWorkshops";
 import ScheduleCalendarSelector from "./components/Scheduling/ScheduleCalendarSelector";
 
+interface FormDataType {
+  maintenanceId: number | null;
+  servicesId: string[]; // o number[], depende del backend
+  observation: string;
+}
+
 function App() {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
@@ -15,7 +21,7 @@ function App() {
     email: "",
     phone: "",
     observation: "",
-    servicesId: "",
+    servicesId: [],
     maintenanceId: "",
     mechanicId: "",
     time: "",

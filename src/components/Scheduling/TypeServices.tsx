@@ -3,12 +3,13 @@ import {
   Card,
   CardBody,
   Divider,
-  Button,
   Select,
   SelectItem,
   CardHeader,
   Textarea,
 } from "@heroui/react";
+import { Selection } from "@heroui/react";
+
 import { getServices } from "../../services/TypesServcies";
 import { VehicleIcon } from "../Icons/VehicleIcon";
 import texts from "../../util/text";
@@ -27,7 +28,11 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
   const [services, setServices] = useState<Services[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [values, setValues] = useState([]);
+  /* const [values, setValues] = useState([]); */
+  const [values, setValues] = useState<Set<string>>(new Set());
+  const [selectedServices, setSelectedServices] = useState<Set<string>>(
+    new Set()
+  );
 
   useEffect(() => {
     fetchServices();
@@ -35,9 +40,12 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
   }, []);
 
   useEffect(() => {
-    if (typeof formData?.servicesId && formData.servicesId.length > 0)
-      setValues(formData.servicesId);
-  }, []);
+    if (Array.isArray(formData.servicesId)) {
+      setValues(new Set(formData.servicesId.map(String)));
+      const selectedKeys = Array.from(formData.servicesId).map(String);
+      setSelectedServices(new Set(selectedKeys));
+    }
+  }, [formData.servicesId]);
 
   const _renderLabel = (text: string, styles?: string) => (
     <div className={styles}>{text}</div>
@@ -53,6 +61,7 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
     }
     setLoading(false);
   };
+
   const fetchMaintenance = async () => {
     const response = await getMaintenances();
     if (response.success && response.data) {
@@ -63,11 +72,21 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
     }
     setLoading(false);
   };
-  const handleMaintenanceChange = (e: ChangeEvent<HTMLInputElement>) => {
+
+  const handleMaintenanceChange = (e: ChangeEvent<HTMLSelectElement>) => {
     updateFormData({ maintenanceId: e.target.value });
   };
-  const handleServicesChange = (e: ChangeEvent<HTMLInputElement>) => {
-    updateFormData({ servicesId: e.target.value });
+
+  const handleServicesChange = (keys: Selection) => {
+    if (keys === "all") {
+      const allServiceIds = services.map((s) => String(s.id));
+      setSelectedServices(new Set(allServiceIds));
+      updateFormData({ servicesId: allServiceIds });
+    } else {
+      const selectedKeys = Array.from(keys).map(String);
+      setSelectedServices(new Set(selectedKeys));
+      updateFormData({ servicesId: selectedKeys });
+    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -121,7 +140,9 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
                 label="Mantenimiento"
                 placeholder="Seleccione el mantenimiento"
                 onChange={handleMaintenanceChange}
-                selectedKeys={[String(formData.maintenanceId)]}
+                selectedKeys={
+                  formData.maintenanceId ? [String(formData.maintenanceId)] : []
+                }
               >
                 {maintenances.map((maintenance) => (
                   <SelectItem key={maintenance.id}>
@@ -133,13 +154,14 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
                 className="mb-4"
                 label="Correctivos"
                 placeholder="Seleccione uno varios correctivos"
-                selectedKeys={values}
                 selectionMode="multiple"
-                onSelectionChange={setValues}
-                onChange={handleServicesChange}
+                onSelectionChange={handleServicesChange}
+                selectedKeys={selectedServices}
               >
                 {services.map((service) => (
-                  <SelectItem key={service.id}>{service.nombre}</SelectItem>
+                  <SelectItem key={String(service.id)}>
+                    {service.nombre}
+                  </SelectItem>
                 ))}
               </Select>
               <Textarea
