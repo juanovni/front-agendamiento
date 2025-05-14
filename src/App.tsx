@@ -18,6 +18,9 @@ function App() {
     servicesId: "",
     maintenanceId: "",
     mechanicId: "",
+    time: "",
+    date: "",
+    advisorId:""
   });
 
   const next = () => setStep((prev) => prev + 1);

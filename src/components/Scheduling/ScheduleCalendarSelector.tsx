@@ -10,27 +10,16 @@ import {
   User,
   Alert,
 } from "@heroui/react";
-import { getServices } from "../../services/TypesServcies";
 import { VehicleIcon } from "../Icons/VehicleIcon";
 import texts from "../../util/text";
-import { getMaintenances } from "../../services/maintenanceService";
 import ButtonElement from "../Elements/ButtonElement";
-import DatePicker from "react-datepicker";
-import { format, getDay } from "date-fns";
 import "react-datepicker/dist/react-datepicker.css";
-import {
-  today,
-  getLocalTimeZone,
-  isWeekend,
-  getWeeksInMonth,
-  getDayOfWeek,
-} from "@internationalized/date";
+import { today, getLocalTimeZone, getDayOfWeek } from "@internationalized/date";
 import { useLocale } from "@react-aria/i18n";
 import { getAdvisorsByMechanicalWokshops } from "../../services/advisorService";
 
-// Horarios por día de la semana (0: domingo, 1: lunes, ..., 6: sábado)
 const disponibilidad: { [dia: number]: string[] } = {
-  0: [], // Domingo
+  0: [], //Sunday
   1: [
     "09:00",
     "10:00",
@@ -42,12 +31,12 @@ const disponibilidad: { [dia: number]: string[] } = {
     "18:00",
     "19:00",
     "20:00",
-  ], // Lunes
-  2: ["10:00", "12:00", "15:00"], // Martes
-  3: ["08:00", "13:00", "16:00"], // Miércoles
-  4: ["09:30", "11:30", "17:00"], // Jueves
-  5: ["10:00", "14:00", "18:00"], // Viernes
-  6: ["09:00", "12:00"], // Sábado
+  ], // Monday
+  2: ["10:00", "12:00", "15:00"], // Sunday
+  3: ["08:00", "13:00", "16:00"], // Wednesday
+  4: ["09:30", "11:30", "17:00"], // Thursday
+  5: ["10:00", "14:00", "18:00"], // Friday
+  6: ["09:00", "12:00"], // Saturday
 };
 
 interface Props {
@@ -65,9 +54,6 @@ const ScheduleCalendarSelector = ({
 }: Props) => {
   const [advisors, setAdvisors] = useState<Advisor[]>([]);
   const [advisorsAvatars, setAdvisorsAvatars] = useState<Advisor[] | []>([]);
-  const [advisorsAvatarOnly, setAdvisorsAvatarOnly] = useState<Advisor | null>(
-    null
-  );
   const allAdvisor: Advisor = {
     id: "",
     guid: "",
@@ -76,12 +62,9 @@ const ScheduleCalendarSelector = ({
   };
   let { locale } = useLocale();
   let [date, setDate] = useState(today(getLocalTimeZone()));
-  let isInvalid = isWeekend(date, locale);
   let dayOfWeek = getDayOfWeek(date, locale);
-  const [horaSeleccionada, setHoraSeleccionada] = useState<string | null>(null);
-
-  const diaSemana = dayOfWeek ? getDayOfWeek(date, locale) : 1; // default lunes
-  const horasDisponibles = disponibilidad[diaSemana];
+  const [selectedTime, setSelectedTime] = useState<string | null>(null);
+  const availableHours = disponibilidad[dayOfWeek];
 
   useEffect(() => {
     if (formData.mechanicId)
@@ -94,13 +77,21 @@ const ScheduleCalendarSelector = ({
       const advisorProcess = response.data.map((adv) => {
         return adv;
       });
-      setAdvisors([allAdvisor, ...advisorProcess]);
+      //setAdvisors([allAdvisor, ...advisorProcess]);
+      setAdvisors([...advisorProcess]);
       setAdvisorsAvatars([...advisorProcess]);
     }
   };
 
-  const manejarSeleccionHora = (hora: string) => {
-    setHoraSeleccionada(hora);
+  const handleDateChange = (date: any) => {
+    setDate(date);
+    setSelectedTime(null);
+    updateFormData({ date: date.toString() });
+  };
+
+  const handleHourClick = (hour: string) => {
+    setSelectedTime(hour);
+    updateFormData({ time: hour });
   };
 
   const handleAdvisorChange = (e: ChangeEvent<HTMLSelectElement>) => {
@@ -115,11 +106,19 @@ const ScheduleCalendarSelector = ({
         .map((advisor) => advisor);
       setAdvisorsAvatars([...advisorProcess]);
     }
+    updateFormData({ advisorId });
   };
 
   const _renderLabel = (text: string, styles?: string) => (
     <div className={styles}>{text}</div>
   );
+
+  const showNextButton = () => {
+    if (!formData.advisorId || !formData.date || !formData.time) {
+      return true;
+    }
+    return false;
+  };
 
   const _renderAvatarImage = (item: any) => {
     return (
@@ -138,7 +137,11 @@ const ScheduleCalendarSelector = ({
     <>
       <div className="w-full flex justify-end gap-2 pr-4 mb-4">
         <ButtonElement label="Anterior" onPress={prev} />
-        <ButtonElement label="Siguiente" onPress={next} />
+        <ButtonElement
+          label="Siguiente"
+          onPress={next}
+          isDisabled={showNextButton()}
+        />
       </div>
       <Card className="m-auto max-w-6xl">
         <CardHeader className="bg-black">
@@ -166,6 +169,7 @@ const ScheduleCalendarSelector = ({
           <div className="flex justify-center gap-4 items-center mb-4">
             <div className="w-full md:w-80">
               <Select
+                isRequired
                 label="Asesor Ténico"
                 size="sm"
                 placeholder="Seleccione un asesor"
@@ -177,51 +181,46 @@ const ScheduleCalendarSelector = ({
               </Select>
             </div>
           </div>
-          <div className="flex gap-4 px-4 py-2">
+          <div className="flex gap-4 px-4 py-1">
             {advisorsAvatars.map((item) => _renderAvatarImage(item))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-2">
-            <div className="text-end">
+            <div className="text-center md:text-end">
               <Calendar
                 showMonthAndYearPickers
-                onChange={(date) => {
-                  setDate(date);
-                  setHoraSeleccionada(null);
-                }}
+                onChange={(date) => handleDateChange(date)}
                 aria-label="Date (Min Date Value)"
                 defaultValue={today(getLocalTimeZone())}
                 minValue={today(getLocalTimeZone())}
               />
             </div>
             <div>
-              <p className="font-medium mb-2">Horas disponibles:</p>
-              {horasDisponibles.length === 0 ? (
-                <p className="text-gray-500">
-                  No hay horas disponibles para este día
-                </p>
+              {_renderLabel("Horas disponibles:", "font-medium mb-2")}
+              {availableHours.length === 0 ? (
+                _renderLabel("No hay horas disponibles para este día")
               ) : (
                 <div className="flex flex-wrap gap-2">
-                  {horasDisponibles.map((hora) => (
+                  {availableHours.map((hour) => (
                     <button
-                      key={hora}
-                      onClick={() => manejarSeleccionHora(hora)}
+                      key={hour}
+                      onClick={() => handleHourClick(hour)}
                       className={`px-3 py-1 rounded border ${
-                        hora === horaSeleccionada
+                        hour === selectedTime
                           ? "bg-blue-600 text-white"
                           : "bg-gray-100 hover:bg-gray-200"
                       }`}
                     >
-                      {hora}
+                      {hour}
                     </button>
                   ))}
                 </div>
               )}
             </div>
           </div>
-          {horaSeleccionada && date && (
+          {selectedTime && date && (
             <Alert
               className="p-2"
-              title={`Has seleccionado as las ${horaSeleccionada} para su agendamiento vehicular.`}
+              title={`Has seleccionado as las ${selectedTime} para su agendamiento vehicular.`}
             />
           )}
         </CardBody>
