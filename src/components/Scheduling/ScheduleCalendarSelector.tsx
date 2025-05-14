@@ -8,6 +8,7 @@ import {
   CardHeader,
   Calendar,
   User,
+  Alert,
 } from "@heroui/react";
 import { getServices } from "../../services/TypesServcies";
 import { VehicleIcon } from "../Icons/VehicleIcon";
@@ -63,8 +64,8 @@ const ScheduleCalendarSelector = ({
   prev,
 }: Props) => {
   const [advisors, setAdvisors] = useState<Advisor[]>([]);
+  const [advisorsAvatars, setAdvisorsAvatars] = useState<Advisor[]>([]);
   let { locale } = useLocale();
-
   let [date, setDate] = useState(today(getLocalTimeZone()));
   let isInvalid = isWeekend(date, locale);
   let dayOfWeek = getDayOfWeek(date, locale);
@@ -74,10 +75,11 @@ const ScheduleCalendarSelector = ({
   const horasDisponibles = disponibilidad[diaSemana];
 
   useEffect(() => {
-    if (formData.mechanicId)
-      fetchAdvisorsByMechanicalWorkshopId(formData.mechanicId, (res) => {
-        setAdvisors(res);
-      });
+    //if (formData.mechanicId)
+    fetchAdvisorsByMechanicalWorkshopId("1", (res) => {
+      setAdvisors(res);
+      setAdvisorsAvatars(res);
+    });
   }, []);
 
   const fetchAdvisorsByMechanicalWorkshopId = async (
@@ -92,6 +94,12 @@ const ScheduleCalendarSelector = ({
 
   const manejarSeleccionHora = (hora: string) => {
     setHoraSeleccionada(hora);
+  };
+
+  const handleAdvisorChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const advisorId = e.target.value;
+    const advisorSelected = advisors.find((m) => m.id == advisorId);
+    setAdvisorsAvatars([advisorSelected]);
   };
 
   const _renderLabel = (text: string, styles?: string) => (
@@ -134,6 +142,7 @@ const ScheduleCalendarSelector = ({
                 label="Asesor Ténico"
                 size="sm"
                 placeholder="Seleccione un asesor"
+                onChange={handleAdvisorChange}
               >
                 {advisors.map((advisor) => (
                   <SelectItem key={advisor.id}>{advisor.nombre}</SelectItem>
@@ -141,14 +150,19 @@ const ScheduleCalendarSelector = ({
               </Select>
             </div>
           </div>
-          <User
-            avatarProps={{
-              src: "https://i.pravatar.cc/150?u=a04258114e29026702d",
-            }}
-            description="Product Designer"
-            name="Jane Doe"
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-6">
+          <div className="flex gap-4 px-2">
+            {advisorsAvatars.map((advisor) => (
+              <User
+                key={advisor.id}
+                avatarProps={{
+                  src: "https://avatars.githubusercontent.com/u/30373425?v=4",
+                }}
+                description="Asesor Ténico"
+                name={advisor.nombre}
+              />
+            ))}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-2">
             <div className="text-end">
               <Calendar
                 showMonthAndYearPickers
@@ -186,15 +200,11 @@ const ScheduleCalendarSelector = ({
               )}
             </div>
           </div>
-
           {horaSeleccionada && date && (
-            <div className="mt-4 p-2 bg-green-100 border border-green-400 rounded">
-              Has seleccionado:{" "}
-              {/* <strong>
-                    {format(date, "EEEE dd/MM/yyyy")}
-                  </strong>{" "} */}
-              a las <strong>{horaSeleccionada}</strong>
-            </div>
+            <Alert
+              className="p-2"
+              title={`Has seleccionado as las ${horaSeleccionada} para su agendamiento vehicular.`}
+            />
           )}
         </CardBody>
       </Card>
