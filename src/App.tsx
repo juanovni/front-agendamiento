@@ -28,13 +28,7 @@ function App() {
 
   return (
     <Layout>
-     {/*  <ScheduleCalendarSelector
-        formData={formData}
-        updateFormData={updateFormData}
-        next={next}
-        prev={prev}
-      /> */}
-       {step === 1 && (
+      {step === 1 && (
         <SearhVehicle
           formData={formData}
           updateFormData={updateFormData}

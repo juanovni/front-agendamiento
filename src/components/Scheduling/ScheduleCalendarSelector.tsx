@@ -64,7 +64,16 @@ const ScheduleCalendarSelector = ({
   prev,
 }: Props) => {
   const [advisors, setAdvisors] = useState<Advisor[]>([]);
-  const [advisorsAvatars, setAdvisorsAvatars] = useState<Advisor[]>([]);
+  const [advisorsAvatars, setAdvisorsAvatars] = useState<Advisor[] | []>([]);
+  const [advisorsAvatarOnly, setAdvisorsAvatarOnly] = useState<Advisor | null>(
+    null
+  );
+  const allAdvisor: Advisor = {
+    id: "",
+    guid: "",
+    nombre: "Todos",
+    estado: "",
+  };
   let { locale } = useLocale();
   let [date, setDate] = useState(today(getLocalTimeZone()));
   let isInvalid = isWeekend(date, locale);
@@ -75,20 +84,18 @@ const ScheduleCalendarSelector = ({
   const horasDisponibles = disponibilidad[diaSemana];
 
   useEffect(() => {
-    //if (formData.mechanicId)
-    fetchAdvisorsByMechanicalWorkshopId("1", (res) => {
-      setAdvisors(res);
-      setAdvisorsAvatars(res);
-    });
-  }, []);
+    if (formData.mechanicId)
+      fetchAdvisorsByMechanicalWorkshopId(formData.mechanicId);
+  }, [formData.mechanicId]);
 
-  const fetchAdvisorsByMechanicalWorkshopId = async (
-    advisorId: string,
-    callback?: (data: Advisor[]) => void
-  ) => {
+  const fetchAdvisorsByMechanicalWorkshopId = async (advisorId: string) => {
     const response = await getAdvisorsByMechanicalWokshops(advisorId);
     if (response.success && response.data) {
-      if (callback) callback(response.data);
+      const advisorProcess = response.data.map((adv) => {
+        return adv;
+      });
+      setAdvisors([allAdvisor, ...advisorProcess]);
+      setAdvisorsAvatars([...advisorProcess]);
     }
   };
 
@@ -98,13 +105,34 @@ const ScheduleCalendarSelector = ({
 
   const handleAdvisorChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const advisorId = e.target.value;
-    const advisorSelected = advisors.find((m) => m.id == advisorId);
-    setAdvisorsAvatars([advisorSelected]);
+    if (advisorId == "") {
+      setAdvisorsAvatars(
+        advisors.filter((advisor) => advisor.id != "").map((advisor) => advisor)
+      );
+    } else {
+      const advisorProcess = advisors
+        .filter((advi) => advi.id == advisorId)
+        .map((advisor) => advisor);
+      setAdvisorsAvatars([...advisorProcess]);
+    }
   };
 
   const _renderLabel = (text: string, styles?: string) => (
     <div className={styles}>{text}</div>
   );
+
+  const _renderAvatarImage = (item: any) => {
+    return (
+      <User
+        key={item.id}
+        avatarProps={{
+          src: "https://avatars.githubusercontent.com/u/30373425?v=4",
+        }}
+        description="Asesor Ténico"
+        name={item.nombre}
+      />
+    );
+  };
 
   return (
     <>
@@ -138,7 +166,6 @@ const ScheduleCalendarSelector = ({
           <div className="flex justify-center gap-4 items-center mb-4">
             <div className="w-full md:w-80">
               <Select
-                isRequired
                 label="Asesor Ténico"
                 size="sm"
                 placeholder="Seleccione un asesor"
@@ -150,17 +177,8 @@ const ScheduleCalendarSelector = ({
               </Select>
             </div>
           </div>
-          <div className="flex gap-4 px-2">
-            {advisorsAvatars.map((advisor) => (
-              <User
-                key={advisor.id}
-                avatarProps={{
-                  src: "https://avatars.githubusercontent.com/u/30373425?v=4",
-                }}
-                description="Asesor Ténico"
-                name={advisor.nombre}
-              />
-            ))}
+          <div className="flex gap-4 px-4 py-2">
+            {advisorsAvatars.map((item) => _renderAvatarImage(item))}
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-2">
             <div className="text-end">

@@ -221,15 +221,13 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
                 onChange={handlePlateChange}
               />
             </div>
-            <div>
-              <Button
-                isIconOnly
-                className="bg-orange-600 hover:bg-orange-600 text-white p-2 rounded-full shadow-md"
-                onPress={handleSearchVehicle}
-              >
-                <SearchIcon />
-              </Button>
-            </div>
+            <Button
+              isIconOnly
+              className="bg-orange-600 hover:bg-orange-600 text-white p-2 rounded-full shadow-md"
+              onPress={handleSearchVehicle}
+            >
+              <SearchIcon />
+            </Button>
           </div>
 
           <div className="mt-2 ml-4">
