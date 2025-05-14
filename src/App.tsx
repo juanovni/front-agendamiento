@@ -3,6 +3,7 @@ import Layout from "./components/Layout/Layout";
 import SearhVehicle from "./components/Scheduling/SearchVehicle";
 import TypeServices from "./components/Scheduling/TypeServices";
 import MechanicalWorkshops from "./components/Scheduling/MechanicalWorkshops";
+import ScheduleCalendarSelector from "./components/Scheduling/ScheduleCalendarSelector";
 
 function App() {
   const [step, setStep] = useState(1);
@@ -44,6 +45,14 @@ function App() {
       )}
       {step === 3 && (
         <MechanicalWorkshops
+          formData={formData}
+          updateFormData={updateFormData}
+          next={next}
+          prev={prev}
+        />
+      )}
+      {step === 4 && (
+        <ScheduleCalendarSelector
           formData={formData}
           updateFormData={updateFormData}
           next={next}

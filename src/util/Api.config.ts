@@ -21,4 +21,7 @@ export const routes = {
   maintenance: {
     all: "/v1/maintenances",
   },
+  advisor: {
+    advisorsByMechanicalWokshops: "/v1/advisors/mechanical-workshop",
+  },
 };

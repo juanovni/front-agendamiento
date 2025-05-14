@@ -153,7 +153,7 @@ const MechanicalWorkshops = ({
                 >
                   <Card
                     className={`cursor-pointer min-h-[440px] hover:shadow-xl ${
-                      mechanicalValue == parseInt(mechanicalWorkshop.id)
+                      formData.mechanicId == parseInt(mechanicalWorkshop.id)
                         ? "border-3 border-orange-400"
                         : ""
                     }`}

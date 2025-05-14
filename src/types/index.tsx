@@ -32,6 +32,13 @@ interface Services {
   estado: string;
 }
 
+interface Advisor {
+  id: string;
+  guid: string;
+  nombre: string;
+  estado: string;
+}
+
 interface MechanicalWorkshops {
   id: string;
   nombre: string;
