@@ -3,20 +3,21 @@ import {
   Card,
   CardBody,
   Divider,
-  Button,
   Input,
   Select,
   SelectItem,
   CardHeader,
 } from "@heroui/react";
-import { SearchIcon } from "../Icons/SearchIcon";
-import { VehicleIcon } from "../Icons/VehicleIcon";
 import { getVehicleInfoByPlate } from "../../services/vechicleService";
 import { getModelsByBrand } from "../../services/modelService";
 import { getBrands } from "../../services/brandService";
 import texts from "../../util/text";
 import Swal from "sweetalert2";
 import ButtonElement from "../Elements/ButtonElement";
+import { SearchIcon } from "../Icons/SearchIcon";
+import { VehicleIcon } from "../Icons/VehicleIcon";
+import { ChevronRight } from "../Icons/ChevronRight";
+import SectionTitle from "../Elements/SectionTitle";
 
 const initialValues = {
   fields: [
@@ -66,6 +67,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState<boolean>(false);
+  const [disableButtonSearch, setDisableButtonSearch] = useState<boolean>(true);
 
   const showAlert = (title: string, text: string, icon: string) => {
     Swal.fire({
@@ -79,6 +81,12 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   useEffect(() => {
     fetchBrands();
   }, []);
+
+  useEffect(() => {
+    if (formData.brandId) {
+      fetchModels(parseInt(formData.brandId));
+    }
+  }, [formData.brandId]);
 
   const handleSearchVehicle = () => {
     if (plateInput.length > 4)
@@ -117,8 +125,11 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   };
 
   const handlePlateChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setPlateInput(e.target.value);
-    updateFormData({ plate: e.target.value });
+    const plateValue = e.target.value;
+    updateFormData({ plate: plateValue });
+    setPlateInput(plateValue);
+    setDisableButtonSearch(true);
+    if (plateValue.length > 5) setDisableButtonSearch(false);
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -171,10 +182,6 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
     setLoading(false);
   };
 
-  const _renderLabel = (text: string, styles?: string) => (
-    <div className={styles}>{text}</div>
-  );
-
   const showNextButton = () => {
     if (
       !formData.plate ||
@@ -190,11 +197,12 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   return (
     <>
       <div className="w-full flex justify-end pr-4 mb-4">
-        <ButtonElement
-          label="Siguiente"
-          onPress={handleNext}
-          isDisabled={showNextButton()}
-        />
+        <ButtonElement onPress={handleNext} isDisabled={showNextButton()}>
+          <div className="flex justify-center gap-2 items-center">
+            Siguiente
+            <ChevronRight />
+          </div>
+        </ButtonElement>
       </div>
       <Card className="m-auto max-w-6xl">
         <CardHeader className="bg-black">
@@ -221,26 +229,19 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
                 onChange={handlePlateChange}
               />
             </div>
-            <Button
+            <ButtonElement
               isIconOnly
               className="bg-orange-600 hover:bg-orange-600 text-white p-2 rounded-full shadow-md"
               onPress={handleSearchVehicle}
+              isDisabled={disableButtonSearch}
             >
               <SearchIcon />
-            </Button>
+            </ButtonElement>
           </div>
-
-          <div className="mt-2 ml-4">
-            {_renderLabel(
-              "Información del vehículo",
-              "text-xl font-medium tracking-tight text-gray-950"
-            )}
-            {_renderLabel(
-              "Continue con el agendamiento de la cita, diligenciando los campos",
-              "font-light text-sm"
-            )}
-          </div>
-
+          <SectionTitle
+            title="Información del vehículo"
+            subTitle="Continue con el agendamiento de la cita, diligenciando los campos"
+          />
           <div className="flex flex-col gap-4 p-4">
             <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
               <Select

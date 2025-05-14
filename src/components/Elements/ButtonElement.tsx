@@ -1,22 +1,26 @@
-import { Button } from "@heroui/react";
+import { Button, ButtonProps } from "@heroui/react";
+import { FC, ReactNode } from "react";
+import clsx from "clsx";
 
-interface Props {
-  label: string;
-  onPress?: () => void;
-  isDisabled?: boolean;
+interface ButtonElementProps extends ButtonProps {
+  children: ReactNode;
+  className?: string;
 }
 
-const ButtonElement = ({ label, onPress, isDisabled }: Props) => {
+const ButtonElement: FC<ButtonElementProps> = ({
+  children,
+  className,
+  ...rest
+}) => {
   return (
     <Button
-      onPress={onPress}
       variant="shadow"
       size="lg"
       radius="sm"
-      className="font-semibold bg-black text-white"
-      isDisabled={isDisabled}
+      className={clsx("font-semibold bg-black text-white", className)}
+      {...rest}
     >
-      {label}
+      {children}
     </Button>
   );
 };

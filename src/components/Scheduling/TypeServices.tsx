@@ -7,14 +7,16 @@ import {
   SelectItem,
   CardHeader,
   Textarea,
+  Selection,
 } from "@heroui/react";
-import { Selection } from "@heroui/react";
-
 import { getServices } from "../../services/TypesServcies";
 import { VehicleIcon } from "../Icons/VehicleIcon";
-import texts from "../../util/text";
 import { getMaintenances } from "../../services/maintenanceService";
 import ButtonElement from "../Elements/ButtonElement";
+import SectionTitle from "../Elements/SectionTitle";
+import texts from "../../util/text";
+import { ChevronRight } from "../Icons/ChevronRight";
+import { ChevronLeft } from "../Icons/ChevronLeft";
 
 interface Props {
   formData: any;
@@ -28,7 +30,6 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
   const [services, setServices] = useState<Services[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  /* const [values, setValues] = useState([]); */
   const [values, setValues] = useState<Set<string>>(new Set());
   const [selectedServices, setSelectedServices] = useState<Set<string>>(
     new Set()
@@ -103,12 +104,18 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
   return (
     <>
       <div className="w-full flex justify-end gap-2 pr-4 mb-4">
-        <ButtonElement label="Anterior" onPress={prev} />
-        <ButtonElement
-          label="Siguiente"
-          onPress={next}
-          isDisabled={showNextButton()}
-        />
+        <ButtonElement onPress={prev}>
+          <div className="flex justify-center gap-2 items-center">
+            <ChevronLeft />
+            Anterior
+          </div>
+        </ButtonElement>
+        <ButtonElement onPress={next} isDisabled={showNextButton()}>
+          <div className="flex justify-center gap-2 items-center">
+            Siguiente
+            <ChevronRight />
+          </div>
+        </ButtonElement>
       </div>
       <Card className="m-auto max-w-6xl">
         <CardHeader className="bg-black">
@@ -121,18 +128,10 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
         </CardHeader>
         <Divider />
         <CardBody>
-          <div className="flex justify-start pr-4 mb-4">
-            <div className="mt-2 ml-4">
-              {_renderLabel(
-                "Servicios",
-                "text-xl font-medium tracking-tight text-gray-950"
-              )}
-              {_renderLabel(
-                "Seleccione los servicios a realizar",
-                "font-light text-sm"
-              )}
-            </div>
-          </div>
+          <SectionTitle
+            title="Servicios"
+            subTitle="Seleccione los servicios a realizar"
+          />
           <div className="flex justify-center gap-4 items-center p-2">
             <div className="w-full md:w-[60%]">
               <Select

@@ -17,6 +17,9 @@ import "react-datepicker/dist/react-datepicker.css";
 import { today, getLocalTimeZone, getDayOfWeek } from "@internationalized/date";
 import { useLocale } from "@react-aria/i18n";
 import { getAdvisorsByMechanicalWokshops } from "../../services/advisorService";
+import { ChevronLeft } from "../Icons/ChevronLeft";
+import { ChevronRight } from "../Icons/ChevronRight";
+import SectionTitle from "../Elements/SectionTitle";
 
 const disponibilidad: { [dia: number]: string[] } = {
   0: [], //Sunday
@@ -136,12 +139,18 @@ const ScheduleCalendarSelector = ({
   return (
     <>
       <div className="w-full flex justify-end gap-2 pr-4 mb-4">
-        <ButtonElement label="Anterior" onPress={prev} />
-        <ButtonElement
-          label="Siguiente"
-          onPress={next}
-          isDisabled={showNextButton()}
-        />
+        <ButtonElement onPress={prev}>
+          <div className="flex justify-center gap-2 items-center">
+            <ChevronLeft />
+            Anterior
+          </div>
+        </ButtonElement>
+        <ButtonElement onPress={next} isDisabled={showNextButton()}>
+          <div className="flex justify-center gap-2 items-center">
+            Siguiente
+            <ChevronRight />
+          </div>
+        </ButtonElement>
       </div>
       <Card className="m-auto max-w-6xl">
         <CardHeader className="bg-black">
@@ -154,18 +163,10 @@ const ScheduleCalendarSelector = ({
         </CardHeader>
         <Divider />
         <CardBody>
-          <div className="flex justify-start pr-4 mb-4">
-            <div className="mt-2 ml-4">
-              {_renderLabel(
-                "Horarios Disponibles",
-                "text-xl font-medium tracking-tight text-gray-950"
-              )}
-              {_renderLabel(
-                "Seleccione el horario que va a realizar el mantenimiento",
-                "font-light text-sm"
-              )}
-            </div>
-          </div>
+          <SectionTitle
+            title="Horarios Disponibles"
+            subTitle="Seleccione el horario que va a realizar el mantenimiento"
+          />
           <div className="flex justify-center gap-4 items-center mb-4">
             <div className="w-full md:w-80">
               <Select

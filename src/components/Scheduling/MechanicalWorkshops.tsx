@@ -13,6 +13,9 @@ import { getMechanicalWorkshops } from "../../services/mechanicalWorkshops";
 import ButtonElement from "../Elements/ButtonElement";
 import { VehicleIcon } from "../Icons/VehicleIcon";
 import texts from "../../util/text";
+import { ChevronLeft } from "../Icons/ChevronLeft";
+import { ChevronRight } from "../Icons/ChevronRight";
+import SectionTitle from "../Elements/SectionTitle";
 
 interface Props {
   formData: any;
@@ -100,12 +103,18 @@ const MechanicalWorkshops = ({
   return (
     <>
       <div className="w-full flex justify-end gap-2 pr-4 mb-4">
-        <ButtonElement label="Anterior" onPress={prev} />
-        <ButtonElement
-          label="Siguiente"
-          onPress={next}
-          isDisabled={showNextButton()}
-        />
+        <ButtonElement onPress={prev}>
+          <div className="flex justify-center gap-2 items-center">
+            <ChevronLeft />
+            Anterior
+          </div>
+        </ButtonElement>
+        <ButtonElement onPress={next} isDisabled={showNextButton()}>
+          <div className="flex justify-center gap-2 items-center">
+            Siguiente
+            <ChevronRight />
+          </div>
+        </ButtonElement>
       </div>
       <div className="m-4">
         <Card className="m-auto w-full">
@@ -120,16 +129,10 @@ const MechanicalWorkshops = ({
           <Divider />
           <CardBody>
             <div className="flex justify-between items-center pr-4 mb-4 w-full">
-              <div className="mt-2 ml-4">
-                {_renderLabel(
-                  "Lista de Talleres",
-                  "text-xl font-medium tracking-tight text-gray-950"
-                )}
-                {_renderLabel(
-                  "Seleccione el taller de su preferencia",
-                  "font-light text-sm"
-                )}
-              </div>
+              <SectionTitle
+                title="Lista de Talleres"
+                subTitle="Seleccione el taller de su preferencia"
+              />
               <div className="flex justify-end gap-2 w-52">
                 <Select
                   label="Filtrar por ciudad"
