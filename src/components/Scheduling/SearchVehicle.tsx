@@ -93,12 +93,15 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
         plateInput,
         ({ propietario, email, telefono, marca, modelo }) => {
           fetchModels(marca?.id);
+          //const brandFilter = brands.find((b) => parseInt(b.id) == marca.id);
           updateFormData({
             name: propietario,
             email: email,
             phone: telefono,
-            brandId: marca?.id,
-            modelId: modelo?.id,
+            brandId: marca.id,
+            brandName: marca.nombre,
+            modelId: modelo.id,
+            modelName: modelo.nombre,
           });
         }
       );
@@ -111,15 +114,27 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   const handleBrandChange = (e: ChangeEvent<HTMLSelectElement>) => {
     let brandId = e.target.value;
     if (brandId) {
+      const brandSelected = brands.find(
+        (item) => Number(item.id) == Number(brandId)
+      );
       fetchModels(parseInt(brandId));
-      updateFormData({ brandId });
+      updateFormData({
+        brandId: brandSelected?.id,
+        brandName: brandSelected?.nombre,
+      });
     }
   };
 
   const handleModelChange = (e: ChangeEvent<HTMLSelectElement>) => {
     let modelId = e.target.value;
     if (modelId) {
-      updateFormData({ modelId });
+      const modelSelected = models.find(
+        (item) => Number(item.id) == Number(modelId)
+      );
+      updateFormData({
+        modelId: modelSelected?.id,
+        modelName: modelSelected?.nombre,
+      });
     }
   };
 

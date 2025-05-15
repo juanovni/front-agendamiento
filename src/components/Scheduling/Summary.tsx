@@ -15,7 +15,6 @@ import {
   ModalHeader,
   ModalBody,
   ModalFooter,
-  Button,
   useDisclosure,
 } from "@heroui/react";
 import { VehicleIcon } from "../Icons/VehicleIcon";
@@ -47,19 +46,15 @@ const initialValues = {
       label: "Email",
     },
     {
-      key: "brandId",
+      key: "brandName",
       label: "Marca",
     },
     {
-      key: "modelId",
+      key: "modelName",
       label: "Modelo",
     },
   ],
   services: [
-    {
-      key: "servicesId",
-      label: "Servicios",
-    },
     {
       key: "observation",
       label: "Observaciones",
@@ -123,7 +118,7 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
     }
     return false;
   };
-console.log(formData)
+  console.log(formData);
   const swhowConfirModal = () => {
     return (
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
@@ -151,11 +146,10 @@ console.log(formData)
                 </div>
               </ModalBody>
               <ModalFooter>
-                <Button color="default" variant="light" onPress={onClose}>
+                <ButtonElement className="bg-white text-black" variant="light" onPress={onClose}>
                   Cancelar
-                </Button>
-                <Button
-                  color="warning"
+                </ButtonElement>
+                <ButtonElement
                   onPress={(e) => {
                     setSelected("1");
                     onClose();
@@ -163,7 +157,7 @@ console.log(formData)
                   isDisabled={isDisabledConfirmButton}
                 >
                   Consiento
-                </Button>
+                </ButtonElement>
               </ModalFooter>
             </>
           )}

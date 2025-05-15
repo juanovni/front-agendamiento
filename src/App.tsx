@@ -17,7 +17,9 @@ function App() {
   const [formData, setFormData] = useState({
     plate: "",
     brandId: "",
+    brandName: "",
     modelId: "",
+    modelName: "",
     name: "",
     email: "",
     phone: "",

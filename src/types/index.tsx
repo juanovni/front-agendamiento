@@ -10,8 +10,8 @@ interface Vehicle {
   propietario: string;
   email: string;
   telefono: string;
-  marca: { id: number };
-  modelo: { id: number };
+  marca: { id: number; nombre: string };
+  modelo: { id: number; nombre: string };
 }
 
 interface Brand {
