@@ -52,7 +52,6 @@ interface Props {
 }
 
 const initialFormState = {
-  plate: "",
   brandId: "",
   modelId: "",
   name: "",

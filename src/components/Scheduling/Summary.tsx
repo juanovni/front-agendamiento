@@ -1,4 +1,4 @@
-import { useState, ChangeEvent, ReactNode, JSX } from "react";
+import { useState, ChangeEvent, JSX } from "react";
 import {
   Card,
   CardBody,
@@ -7,9 +7,16 @@ import {
   Alert,
   RadioGroup,
   Radio,
-  Image,
   Accordion,
   AccordionItem,
+  Checkbox,
+  Modal,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
 } from "@heroui/react";
 import { VehicleIcon } from "../Icons/VehicleIcon";
 import ButtonElement from "../Elements/ButtonElement";
@@ -70,13 +77,26 @@ const initialValues = {
   ],
 };
 const Summary = ({ formData, updateFormData, next, prev }: Props) => {
-  console.log(formData);
   const [selected, setSelected] = useState("0");
-  const defaultContent =
-    "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.";
+  const [isChecked, setIsChecked] = useState<boolean>(false);
+  const [isDisabledConfirmButton, setIsDisabledConfirmButton] =
+    useState<boolean>(true);
+  const { isOpen, onOpen, onOpenChange } = useDisclosure();
 
   const handleDataProtectionSelected = (e: ChangeEvent<HTMLInputElement>) => {
-    setSelected(e.target.value);
+    setSelected("0");
+    if (e.target.value == "1") {
+      onOpen();
+      setIsDisabledConfirmButton(true);
+    }
+  };
+
+  const handleCheckboxChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setIsDisabledConfirmButton(true);
+    if (e.target.checked) {
+      setIsDisabledConfirmButton(false);
+    }
+    setIsChecked(true);
   };
 
   const _renderLabel = (key: string): JSX.Element => {
@@ -98,10 +118,58 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
   };
 
   const showNextButton = () => {
-    if (!formData.maintenanceId || !formData.observation) {
+    if (!formData.maintenanceId || !formData.observation || selected == "0") {
       return true;
     }
     return false;
+  };
+
+  const swhowConfirModal = () => {
+    return (
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
+        <ModalContent>
+          {(onClose) => (
+            <>
+              <ModalHeader className="flex flex-col gap-1">
+                {texts.DATA_PROTECTION.title.first}
+              </ModalHeader>
+              <ModalBody>
+                <p>{texts.DATA_PROTECTION.description.first}</p>
+                <p>{texts.DATA_PROTECTION.description.second}</p>
+                <p>{texts.DATA_PROTECTION.description.third}</p>
+                <div className="flex py-2 px-1 justify-between">
+                  <Checkbox
+                    classNames={{
+                      label: "text-small",
+                    }}
+                    color="warning"
+                    checked={isChecked}
+                    onChange={handleCheckboxChange}
+                  >
+                    <p>{texts.DATA_PROTECTION.accept}</p>
+                  </Checkbox>
+                </div>
+              </ModalBody>
+              <ModalFooter>
+                <Button color="default" variant="light" onPress={onClose}>
+                  Cancelar
+                </Button>
+                <Button
+                  color="warning"
+                  onPress={(e) => {
+                    setSelected("1");
+                    onClose();
+                  }}
+                  isDisabled={isDisabledConfirmButton}
+                >
+                  Consiento
+                </Button>
+              </ModalFooter>
+            </>
+          )}
+        </ModalContent>
+      </Modal>
+    );
   };
 
   return (
@@ -129,6 +197,7 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
         </CardHeader>
         <Divider />
         <CardBody>
+          {swhowConfirModal()}
           <SectionTitle
             title="Información de la Cita"
             subTitle="Por favor verifique la información"
@@ -159,7 +228,7 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
               </Alert>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-4">
               <CardMechanicalWorkshop
                 name={formData.mechanicDetail.nombre}
                 city={formData.mechanicDetail.ciudad}
