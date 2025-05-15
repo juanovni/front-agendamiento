@@ -4,6 +4,7 @@ import SearhVehicle from "./components/Scheduling/SearchVehicle";
 import TypeServices from "./components/Scheduling/TypeServices";
 import MechanicalWorkshops from "./components/Scheduling/MechanicalWorkshops";
 import ScheduleCalendarSelector from "./components/Scheduling/ScheduleCalendarSelector";
+import Summary from "./components/Scheduling/Summary";
 
 interface FormDataType {
   maintenanceId: number | null;
@@ -23,10 +24,11 @@ function App() {
     observation: "",
     servicesId: [],
     maintenanceId: "",
+    mechanicDetail: {},
     mechanicId: "",
     time: "",
     date: "",
-    advisorId:""
+    advisorId: "",
   });
 
   const next = () => setStep((prev) => prev + 1);
@@ -62,6 +64,14 @@ function App() {
       )}
       {step === 4 && (
         <ScheduleCalendarSelector
+          formData={formData}
+          updateFormData={updateFormData}
+          next={next}
+          prev={prev}
+        />
+      )}
+      {step === 5 && (
+        <Summary
           formData={formData}
           updateFormData={updateFormData}
           next={next}

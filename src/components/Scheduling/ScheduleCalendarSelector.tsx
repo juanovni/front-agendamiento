@@ -9,6 +9,7 @@ import {
   Calendar,
   User,
   Alert,
+  addToast,
 } from "@heroui/react";
 import { VehicleIcon } from "../Icons/VehicleIcon";
 import texts from "../../util/text";
@@ -95,6 +96,12 @@ const ScheduleCalendarSelector = ({
   const handleHourClick = (hour: string) => {
     setSelectedTime(hour);
     updateFormData({ time: hour });
+    addToast({
+      title: "Taller!",
+      description: `Has seleccionado as las ${hour} para su agendamiento vehicular.`,
+      timeout: 2000,
+      shouldShowTimeoutProgress: true,
+    });
   };
 
   const handleAdvisorChange = (e: ChangeEvent<HTMLSelectElement>) => {

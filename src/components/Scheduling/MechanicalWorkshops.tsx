@@ -7,7 +7,6 @@ import {
   Divider,
   Select,
   SelectItem,
-  Image,
 } from "@heroui/react";
 import { getMechanicalWorkshops } from "../../services/mechanicalWorkshops";
 import ButtonElement from "../Elements/ButtonElement";
@@ -16,6 +15,7 @@ import texts from "../../util/text";
 import { ChevronLeft } from "../Icons/ChevronLeft";
 import { ChevronRight } from "../Icons/ChevronRight";
 import SectionTitle from "../Elements/SectionTitle";
+import CardMechanicalWorkshop from "./Cards/CardMechanicalWorkshop";
 
 interface Props {
   formData: any;
@@ -59,8 +59,8 @@ const MechanicalWorkshops = ({
     setLoading(false);
   };
 
-  const _renderLabel = (text: string, styles?: string) => (
-    <div className={`${styles} text-tiny font-bold`}>{text}</div>
+  const _renderLabel = (text: string) => (
+    <div className={`uppercase ml-6 py-1 text-tiny font-bold`}>{text}</div>
   );
 
   const getCitiesOnly = (data: MechanicalWorkshops[]): string[] => {
@@ -90,7 +90,10 @@ const MechanicalWorkshops = ({
     });
 
     setMechanicalValue(mechanicId);
-    updateFormData({ mechanicId });
+    updateFormData({
+      mechanicId,
+      mechanicDetail: mechanicalWorkshopSelected,
+    });
   };
 
   const showNextButton = () => {
@@ -154,49 +157,25 @@ const MechanicalWorkshops = ({
                     handleMechanicalClick(parseInt(mechanicalWorkshop.id))
                   }
                 >
-                  <Card
-                    className={`cursor-pointer min-h-[440px] hover:shadow-xl ${
+                  <CardMechanicalWorkshop
+                    name={mechanicalWorkshop.nombre}
+                    city={mechanicalWorkshop.ciudad}
+                    address={mechanicalWorkshop.direccion}
+                    phone={mechanicalWorkshop.telefono}
+                    isSelected={
                       formData.mechanicId == parseInt(mechanicalWorkshop.id)
-                        ? "border-3 border-orange-400"
-                        : ""
-                    }`}
+                    }
                   >
-                    <CardHeader className="pb-0 pt-2 px-4 flex-col items-start">
-                      <h4 className="font-bold text-large">
-                        {mechanicalWorkshop.nombre}
-                      </h4>
-                      <small className="text-default-500">
-                        {mechanicalWorkshop.ciudad}
-                      </small>
-                      <div className="flex items-center justify-center self-center m-4">
-                        <Image
-                          isBlurred
-                          className="w-full h-32 object-contain"
-                          alt="DGMotors"
-                          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG5XWyGxaf9B5Fj1LX-JjK_QaEuLmoeP3NUg&s"
-                        />
-                      </div>
-                    </CardHeader>
-                    <CardBody className="overflow-visible py-2">
-                      {_renderLabel(
-                        mechanicalWorkshop.direccion,
-                        "uppercase ml-6 py-1"
-                      )}
-                      {_renderLabel(
-                        mechanicalWorkshop.telefono,
-                        "uppercase ml-6 py-1"
-                      )}
-                      <div className="ml-10 py-2 mb-4">
-                        <ul className="list-disc">
-                          {mechanicalWorkshop?.mantenimientos.map(
-                            ({ id, nombre }) => (
-                              <li key={id}>{nombre}</li>
-                            )
-                          )}
-                        </ul>
-                      </div>
-                    </CardBody>
-                  </Card>
+                    <div className="ml-10 py-2 mb-4">
+                      <ul className="list-disc">
+                        {mechanicalWorkshop?.mantenimientos.map(
+                          ({ id, nombre }) => (
+                            <li key={id}>{nombre}</li>
+                          )
+                        )}
+                      </ul>
+                    </div>
+                  </CardMechanicalWorkshop>
                 </div>
               ))}
             </div>
