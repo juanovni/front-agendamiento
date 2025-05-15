@@ -67,7 +67,7 @@ const initialValues = {
   ],
   datetime: [
     {
-      key: "advisorId",
+      key: "advisorName",
       label: "Asesor",
     },
     {
@@ -109,7 +109,7 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
         label = "Servicios";
         break;
       case "datetime":
-        label = "Fecha y hora de la cita";
+        label = "Asesor ténico y fecha de la cita";
         break;
       default:
         break;
@@ -123,7 +123,7 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
     }
     return false;
   };
-
+console.log(formData)
   const swhowConfirModal = () => {
     return (
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
@@ -250,7 +250,8 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
                       >
                         {fields.map((field) => (
                           <p key={field.key} className="font-normal text-base">
-                            {field.label}: {formData[field.key]}
+                            {field.label}: {formData[field.key]}{" "}
+                            {field.key == "date" && formData.time}
                           </p>
                         ))}
                       </AccordionItem>

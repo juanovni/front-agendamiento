@@ -29,6 +29,7 @@ function App() {
     time: "",
     date: "",
     advisorId: "",
+    advisorName: "",
   });
 
   const next = () => setStep((prev) => prev + 1);

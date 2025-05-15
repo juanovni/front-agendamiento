@@ -116,7 +116,10 @@ const ScheduleCalendarSelector = ({
         .map((advisor) => advisor);
       setAdvisorsAvatars([...advisorProcess]);
     }
-    updateFormData({ advisorId });
+    const advisorSelected = advisors.find(
+      (ad) => parseInt(ad.id) == Number(advisorId)
+    );
+    updateFormData({ advisorId, advisorName: advisorSelected?.nombre });
   };
 
   const _renderLabel = (text: string, styles?: string) => (

@@ -59,10 +59,6 @@ const MechanicalWorkshops = ({
     setLoading(false);
   };
 
-  const _renderLabel = (text: string) => (
-    <div className={`uppercase ml-6 py-1 text-tiny font-bold`}>{text}</div>
-  );
-
   const getCitiesOnly = (data: MechanicalWorkshops[]): string[] => {
     const cities = new Set<string>();
     data.forEach((item) => {
