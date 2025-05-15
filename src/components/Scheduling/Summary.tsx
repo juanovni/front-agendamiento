@@ -1,4 +1,5 @@
 import { useState, ChangeEvent, JSX } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   Card,
   CardBody,
@@ -73,6 +74,7 @@ const initialValues = {
   ],
 };
 const Summary = ({ formData, updateFormData, next, prev }: Props) => {
+  const navigate = useNavigate();
   const [selected, setSelected] = useState("0");
   const [isChecked, setIsChecked] = useState<boolean>(false);
   const [isDisabledConfirmButton, setIsDisabledConfirmButton] =
@@ -106,6 +108,7 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
         placa: formData.plate,
       };
       createSchedule(payload);
+      window.location.reload();
     }
   };
 
