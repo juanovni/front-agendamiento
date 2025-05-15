@@ -24,6 +24,7 @@ import texts from "../../util/text";
 import { ChevronLeft } from "../Icons/ChevronLeft";
 import { CalendarIcon } from "../Icons/Calendar";
 import CardMechanicalWorkshop from "./Cards/CardMechanicalWorkshop";
+import { saveSchedule } from "../../services/vechicleService";
 
 interface Props {
   formData: any;
@@ -77,7 +78,6 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
   const [isDisabledConfirmButton, setIsDisabledConfirmButton] =
     useState<boolean>(true);
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
-
   const handleDataProtectionSelected = (e: ChangeEvent<HTMLInputElement>) => {
     setSelected("0");
     if (e.target.value == "1") {
@@ -92,6 +92,30 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
       setIsDisabledConfirmButton(false);
     }
     setIsChecked(true);
+  };
+
+  const handleSaveForm = () => {
+    if (formData.plate) {
+      const payload: Schedule = {
+        id_marca: formData.brandId,
+        id_modelo: formData.modelId,
+        propietario: formData.name,
+        email: formData.email,
+        estado: 1,
+        telefono: formData.phone,
+        placa: formData.plate,
+      };
+      createSchedule(payload);
+    }
+  };
+
+  const createSchedule = async (payload: Schedule) => {
+    const response = await saveSchedule(payload);
+    if (response.success) {
+      console.log("Vehículo creado:", response.data);
+    } else {
+      console.error("Error al crear vehículo:", response.error);
+    }
   };
 
   const _renderLabel = (key: string): JSX.Element => {
@@ -118,7 +142,7 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
     }
     return false;
   };
-  console.log(formData);
+
   const swhowConfirModal = () => {
     return (
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} size="5xl">
@@ -146,7 +170,11 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
                 </div>
               </ModalBody>
               <ModalFooter>
-                <ButtonElement className="bg-white text-black" variant="light" onPress={onClose}>
+                <ButtonElement
+                  className="bg-white text-black"
+                  variant="light"
+                  onPress={onClose}
+                >
                   Cancelar
                 </ButtonElement>
                 <ButtonElement
@@ -175,7 +203,7 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
             Anterior
           </div>
         </ButtonElement>
-        <ButtonElement onPress={next} isDisabled={showNextButton()}>
+        <ButtonElement onPress={handleSaveForm} isDisabled={showNextButton()}>
           <div className="flex justify-center gap-2 items-center">Agendar</div>
           <CalendarIcon />
         </ButtonElement>

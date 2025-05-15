@@ -10,6 +10,7 @@ export const routes = {
   vehicle: {
     //v1.0
     searchByPlate: "/v1/vehicles/plate",
+    saveForm: "v1/vehicles/store/"
   },
   services: {
     //v1.0

@@ -54,3 +54,14 @@ interface ApiResponse<T> {
   data?: T;
   error?: string;
 }
+
+interface Schedule {
+  id?: number;
+  placa: string;
+  propietario: string;
+  email: string;
+  telefono: string;
+  id_marca: number;
+  id_modelo: number;
+  estado: number;
+}
