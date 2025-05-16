@@ -18,6 +18,7 @@ import {
   ModalFooter,
   useDisclosure,
 } from "@heroui/react";
+import Swal from "sweetalert2";
 import { VehicleIcon } from "../Icons/VehicleIcon";
 import ButtonElement from "../Elements/ButtonElement";
 import SectionTitle from "../Elements/SectionTitle";
@@ -108,7 +109,7 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
         placa: formData.plate,
       };
       createSchedule(payload);
-      window.location.reload();
+      showAlert();
     }
   };
 
@@ -119,6 +120,37 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
     } else {
       console.error("Error al crear vehículo:", response.error);
     }
+  };
+
+  const showAlert = () => {
+    let timerInterval;
+    Swal.fire({
+      title: "Autoagendamiento",
+      text: "Estamos procesesando su solicitud espere unos segundos.",
+      imageUrl:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRG5XWyGxaf9B5Fj1LX-JjK_QaEuLmoeP3NUg&s",
+      imageWidth: 200,
+      imageHeight: 200,
+      imageAlt: "Custom image",
+      timer: 2500,
+      timerProgressBar: true,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+      willClose: () => {
+        clearInterval(timerInterval);
+      },
+    }).then((result) => {
+      if (result.dismiss === Swal.DismissReason.timer) {
+        Swal.fire({
+          text: "Su cita fue agendada con éxito.",
+          icon: "success",
+          draggable: true,
+        }).then((result) => {
+          window.location.reload();
+        });
+      }
+    });
   };
 
   const _renderLabel = (key: string): JSX.Element => {
