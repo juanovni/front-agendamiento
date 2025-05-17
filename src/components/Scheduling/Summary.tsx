@@ -100,12 +100,13 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
   const handleSaveForm = () => {
     if (formData.plate) {
       const payload: Schedule = {
+        id_vehiculo: formData?.vehicleId,
         id_marca: formData.brandId,
         id_modelo: formData.modelId,
         id_taller: formData.mechanicId,
         id_tecnico: formData.advisorId,
         id_mantenimiento: formData.maintenanceId,
-        //id_correctivo: formData.servicesId,
+        id_correctivo: formData.servicesId,
         propietario: formData.name,
         email: formData.email,
         estado: 1,

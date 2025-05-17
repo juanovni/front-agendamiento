@@ -9,6 +9,7 @@ import Summary from ".././components/Scheduling/Summary";
 const Home = () => {
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
+    vehicleId: "",
     plate: "",
     brandId: "",
     brandName: "",

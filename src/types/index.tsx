@@ -61,12 +61,13 @@ interface Schedule {
   propietario: string;
   email: string;
   telefono: string;
+  id_vehiculo?: number;
   id_marca: number;
   id_modelo: number;
   id_taller: number;
   id_tecnico: number;
   id_mantenimiento: number;
-  //id_correctivo:arra
+  id_correctivo:string
   estado: number;
   fecha_agenda: string;
   hora_agenda: string;

@@ -7,6 +7,7 @@ import {
   Select,
   SelectItem,
   CardHeader,
+  Checkbox,
 } from "@heroui/react";
 import { getVehicleInfoByPlate } from "../../services/vechicleService";
 import { getModelsByBrand } from "../../services/modelService";
@@ -67,6 +68,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   const [error, setError] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [disableButtonSearch, setDisableButtonSearch] = useState<boolean>(true);
+  const [isChecked, setIsChecked] = useState<boolean>(false);
 
   const showAlert = (title: string, text: string, icon: string) => {
     Swal.fire({
@@ -91,10 +93,10 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
     if (plateInput.length > 4)
       fetchVehicleInfo(
         plateInput,
-        ({ propietario, email, telefono, marca, modelo }) => {
+        ({ id, propietario, email, telefono, marca, modelo }) => {
           fetchModels(marca?.id);
-          //const brandFilter = brands.find((b) => parseInt(b.id) == marca.id);
           updateFormData({
+            vehicleId: id,
             name: propietario,
             email: email,
             phone: telefono,
@@ -103,6 +105,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
             modelId: modelo.id,
             modelName: modelo.nombre,
           });
+          setIsChecked(true);
         }
       );
   };
@@ -256,12 +259,25 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
             title="Información del vehículo"
             subTitle="Continue con el agendamiento de la cita, diligenciando los campos"
           />
+          <Checkbox
+            className="py-4 px-6"
+            classNames={{
+              label: "text-small",
+            }}
+            color="warning"
+            checked={isChecked}
+            isSelected={isChecked}
+            onChangeCapture={(e) => setIsChecked(!isChecked)}
+          >
+            <p>Desmarcar para actualizar los datos</p>
+          </Checkbox>
           <div className="flex flex-col gap-4 p-4">
             <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
               <Select
                 label="Marca"
                 size="sm"
                 isRequired
+                isDisabled={isChecked}
                 placeholder="Seleccione una marca"
                 onChange={handleBrandChange}
                 selectedKeys={[String(formData.brandId)]}
@@ -274,6 +290,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
                 label="Modelo"
                 size="sm"
                 isRequired
+                isDisabled={isChecked}
                 placeholder="Seleccione una modelo"
                 onChange={handleModelChange}
                 selectedKeys={[String(formData.modelId)]}
@@ -287,6 +304,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
               {initialValues.fields.map((field) => {
                 return (
                   <Input
+                    isDisabled={isChecked}
                     isRequired
                     key={field.id}
                     name={field.id}
