@@ -63,5 +63,12 @@ interface Schedule {
   telefono: string;
   id_marca: number;
   id_modelo: number;
+  id_taller: number;
+  id_tecnico: number;
+  id_mantenimiento: number;
+  //id_correctivo:arra
   estado: number;
+  fecha_agenda: string;
+  hora_agenda: string;
+  observacion: string;
 }

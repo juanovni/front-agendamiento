@@ -102,20 +102,27 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
       const payload: Schedule = {
         id_marca: formData.brandId,
         id_modelo: formData.modelId,
+        id_taller: formData.mechanicId,
+        id_tecnico: formData.advisorId,
+        id_mantenimiento: formData.maintenanceId,
+        //id_correctivo: formData.servicesId,
         propietario: formData.name,
         email: formData.email,
         estado: 1,
         telefono: formData.phone,
         placa: formData.plate,
+        fecha_agenda: formData.date,
+        hora_agenda: formData.time,
+        observacion: formData.observation,
       };
       createSchedule(payload);
-      showAlert();
     }
   };
 
   const createSchedule = async (payload: Schedule) => {
     const response = await saveSchedule(payload);
     if (response.success) {
+      showAlert();
       console.log("Vehículo creado:", response.data);
     } else {
       console.error("Error al crear vehículo:", response.error);
