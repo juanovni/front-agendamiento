@@ -17,11 +17,11 @@ import Swal from "sweetalert2";
 import ButtonElement from "../Elements/ButtonElement";
 import SectionTitle from "../Elements/SectionTitle";
 import texts from "../../util/text";
-import { ChevronLeft } from "../Icons/ChevronLeft";
-import { CalendarIcon } from "../Icons/Calendar";
 import CardMechanicalWorkshop from "./Cards/CardMechanicalWorkshop";
 import { saveSchedule } from "../../services/vechicleService";
 import CardSection from "./Cards/CardSection";
+import { PaginationButtons } from "./PaginationButtons/PaginationButtons";
+import { CalendarIcon } from "../Icons/Calendar";
 
 interface Props {
   formData: any;
@@ -233,19 +233,13 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
 
   return (
     <>
-      <div className="w-full flex justify-end gap-2 pr-4 mb-4">
-        <ButtonElement onPress={prev}>
-          <div className="flex justify-center gap-2 items-center">
-            <ChevronLeft />
-            Anterior
-          </div>
-        </ButtonElement>
-        <ButtonElement onPress={handleSaveForm} isDisabled={showNextButton()}>
-          <div className="flex justify-center gap-2 items-center">Agendar</div>
-          <CalendarIcon />
-        </ButtonElement>
-      </div>
-
+      <PaginationButtons
+        onPrev={prev}
+        onNext={handleSaveForm}
+        isNextDisabled={showNextButton()}
+        nextLabel="Agendar"
+        nextIcon={<CalendarIcon/>}
+      />
       <CardSection>
         {swhowConfirModal()}
         <SectionTitle

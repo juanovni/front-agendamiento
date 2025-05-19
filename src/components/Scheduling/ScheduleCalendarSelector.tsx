@@ -7,15 +7,13 @@ import {
   Alert,
   addToast,
 } from "@heroui/react";
-import ButtonElement from "../Elements/ButtonElement";
 import "react-datepicker/dist/react-datepicker.css";
 import { today, getLocalTimeZone, getDayOfWeek } from "@internationalized/date";
 import { useLocale } from "@react-aria/i18n";
 import { getAdvisorsByMechanicalWokshops } from "../../services/advisorService";
-import { ChevronLeft } from "../Icons/ChevronLeft";
-import { ChevronRight } from "../Icons/ChevronRight";
 import SectionTitle from "../Elements/SectionTitle";
 import CardSection from "./Cards/CardSection";
+import { PaginationButtons } from "./PaginationButtons/PaginationButtons";
 
 const disponibilidad: { [dia: number]: string[] } = {
   0: [], //Sunday
@@ -151,20 +149,11 @@ const ScheduleCalendarSelector = ({
 
   return (
     <>
-      <div className="w-full flex justify-end gap-2 pr-4 mb-4">
-        <ButtonElement onPress={prev}>
-          <div className="flex justify-center gap-2 items-center">
-            <ChevronLeft />
-            Anterior
-          </div>
-        </ButtonElement>
-        <ButtonElement onPress={next} isDisabled={showNextButton()}>
-          <div className="flex justify-center gap-2 items-center">
-            Siguiente
-            <ChevronRight />
-          </div>
-        </ButtonElement>
-      </div>
+      <PaginationButtons
+        onPrev={prev}
+        onNext={next}
+        isNextDisabled={showNextButton()}
+      />
       <CardSection alert={scheduleAlert}>
         <SectionTitle
           title="Horarios Disponibles"

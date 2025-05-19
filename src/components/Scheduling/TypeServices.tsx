@@ -2,11 +2,9 @@ import { useState, useEffect, ChangeEvent } from "react";
 import { Select, SelectItem, Textarea, Selection } from "@heroui/react";
 import { getServices } from "../../services/TypesServcies";
 import { getMaintenances } from "../../services/maintenanceService";
-import ButtonElement from "../Elements/ButtonElement";
 import SectionTitle from "../Elements/SectionTitle";
-import { ChevronRight } from "../Icons/ChevronRight";
-import { ChevronLeft } from "../Icons/ChevronLeft";
 import CardSection from "./Cards/CardSection";
+import { PaginationButtons } from "./PaginationButtons/PaginationButtons";
 
 interface Props {
   formData: any;
@@ -93,20 +91,7 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
 
   return (
     <>
-      <div className="w-full flex justify-end gap-2 pr-4 mb-4">
-        <ButtonElement onPress={prev}>
-          <div className="flex justify-center gap-2 items-center">
-            <ChevronLeft />
-            Anterior
-          </div>
-        </ButtonElement>
-        <ButtonElement onPress={next} isDisabled={showNextButton()}>
-          <div className="flex justify-center gap-2 items-center">
-            Siguiente
-            <ChevronRight />
-          </div>
-        </ButtonElement>
-      </div>
+      <PaginationButtons onPrev={prev} onNext={next} isNextDisabled={showNextButton()} />
       <CardSection>
         <SectionTitle
           title="Servicios"
@@ -152,6 +137,7 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
               }
               onChange={handleChange}
               value={formData.observation}
+              style={{ textTransform: "uppercase" }}
             />
           </div>
         </div>

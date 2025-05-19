@@ -5,10 +5,10 @@ import { getModelsByBrand } from "../../services/modelService";
 import { getBrands } from "../../services/brandService";
 import ButtonElement from "../Elements/ButtonElement";
 import { SearchIcon } from "../Icons/SearchIcon";
-import { ChevronRight } from "../Icons/ChevronRight";
 import SectionTitle from "../Elements/SectionTitle";
 import { showAlert } from "../../util/Swal";
 import CardSection from "./Cards/CardSection";
+import { PaginationButtons } from "./PaginationButtons/PaginationButtons";
 
 const initialValues = {
   fields: [
@@ -134,10 +134,6 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
     updateFormData({ [e.target.name]: e.target.value });
   };
 
-  const handleNext = () => {
-    next();
-  };
-
   const fetchVehicleInfo = async (
     plateInfo: string,
     callback: (data: Vehicle) => void
@@ -195,14 +191,11 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
 
   return (
     <>
-      <div className="w-full flex justify-end pr-4 mb-4">
-        <ButtonElement onPress={handleNext} isDisabled={showNextButton()}>
-          <div className="flex justify-center gap-2 items-center">
-            Siguiente
-            <ChevronRight />
-          </div>
-        </ButtonElement>
-      </div>
+      <PaginationButtons
+        onNext={next}
+        isNextDisabled={showNextButton()}
+        hidePrev={true}
+      />
       <CardSection>
         <div className="flex justify-center gap-4 items-center">
           <div className="w-full md:w-80">
@@ -216,6 +209,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
               size="lg"
               value={formData.plate}
               onChange={handlePlateChange}
+              style={{ textTransform: "uppercase" }}
             />
           </div>
           <ButtonElement
@@ -286,6 +280,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
                   size="md"
                   value={formData[field?.id]}
                   onChange={handleChange}
+                  style={{ textTransform: "uppercase" }}
                 />
               );
             })}

@@ -1,12 +1,10 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import { addToast, Select, SelectItem } from "@heroui/react";
 import { getMechanicalWorkshops } from "../../services/mechanicalWorkshops";
-import ButtonElement from "../Elements/ButtonElement";
-import { ChevronLeft } from "../Icons/ChevronLeft";
-import { ChevronRight } from "../Icons/ChevronRight";
 import SectionTitle from "../Elements/SectionTitle";
 import CardMechanicalWorkshop from "./Cards/CardMechanicalWorkshop";
 import CardSection from "./Cards/CardSection";
+import { PaginationButtons } from "./PaginationButtons/PaginationButtons";
 
 interface Props {
   formData: any;
@@ -24,7 +22,6 @@ const MechanicalWorkshops = ({
   const [mechanicalWorkshops, setMechanicalWorkshops] = useState<
     MechanicalWorkshops[]
   >([]);
-  const [mechanicalValue, setMechanicalValue] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [cities, setCities] = useState<string[]>([]);
@@ -75,8 +72,6 @@ const MechanicalWorkshops = ({
       timeout: 1000,
       shouldShowTimeoutProgress: true,
     });
-
-    setMechanicalValue(mechanicId);
     updateFormData({
       mechanicId,
       mechanicDetail: mechanicalWorkshopSelected,
@@ -92,20 +87,11 @@ const MechanicalWorkshops = ({
 
   return (
     <>
-      <div className="w-full flex justify-end gap-2 pr-4 mb-4">
-        <ButtonElement onPress={prev}>
-          <div className="flex justify-center gap-2 items-center">
-            <ChevronLeft />
-            Anterior
-          </div>
-        </ButtonElement>
-        <ButtonElement onPress={next} isDisabled={showNextButton()}>
-          <div className="flex justify-center gap-2 items-center">
-            Siguiente
-            <ChevronRight />
-          </div>
-        </ButtonElement>
-      </div>
+      <PaginationButtons
+        onPrev={prev}
+        onNext={next}
+        isNextDisabled={showNextButton()}
+      />
       <div className="m-4">
         <CardSection style="w-full">
           <div className="flex justify-between items-center pr-4 mb-4 w-full">
