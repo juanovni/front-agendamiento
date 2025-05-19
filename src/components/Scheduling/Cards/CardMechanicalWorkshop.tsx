@@ -1,7 +1,7 @@
-import { FC, JSX, ReactNode } from "react";
+import { JSX } from "react";
 import { Card, CardBody, CardHeader, Image } from "@heroui/react";
 
-interface CardMechanicalWorkshopProps {
+type CardMechanicalWorkshopProps = {
   children?: JSX.Element | JSX.Element[];
   className?: string;
   name?: string;
@@ -10,9 +10,10 @@ interface CardMechanicalWorkshopProps {
   phone?: string | null;
   isSelected?: boolean;
   sizeImage?: string | null;
-}
+  maintenanceList?: { id: number; nombre: string }[] | [];
+};
 
-const CardMechanicalWorkshop: FC<CardMechanicalWorkshopProps> = ({
+const CardMechanicalWorkshop = ({
   children,
   className,
   name,
@@ -21,7 +22,8 @@ const CardMechanicalWorkshop: FC<CardMechanicalWorkshopProps> = ({
   phone,
   sizeImage = "h-32",
   isSelected = false,
-}) => {
+  maintenanceList,
+}: CardMechanicalWorkshopProps) => {
   return (
     <Card
       className={`cursor-pointer min-h-[440px] hover:shadow-xl ${
@@ -44,6 +46,15 @@ const CardMechanicalWorkshop: FC<CardMechanicalWorkshopProps> = ({
         <div className="uppercase ml-6 py-1 text-tiny font-bold">{address}</div>
         <div className="uppercase ml-6 py-1 text-tiny font-bold">{phone}</div>
         {children}
+        {maintenanceList && (
+          <div className="ml-10 py-2 mb-4">
+            <ul className="list-disc">
+              {maintenanceList?.map(({ id, nombre }) => (
+                <li key={id}>{nombre}</li>
+              ))}
+            </ul>
+          </div>
+        )}
       </CardBody>
     </Card>
   );

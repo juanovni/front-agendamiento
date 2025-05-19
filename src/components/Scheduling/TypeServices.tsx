@@ -1,22 +1,12 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import {
-  Card,
-  CardBody,
-  Divider,
-  Select,
-  SelectItem,
-  CardHeader,
-  Textarea,
-  Selection,
-} from "@heroui/react";
+import { Select, SelectItem, Textarea, Selection } from "@heroui/react";
 import { getServices } from "../../services/TypesServcies";
-import { VehicleIcon } from "../Icons/VehicleIcon";
 import { getMaintenances } from "../../services/maintenanceService";
 import ButtonElement from "../Elements/ButtonElement";
 import SectionTitle from "../Elements/SectionTitle";
-import texts from "../../util/text";
 import { ChevronRight } from "../Icons/ChevronRight";
 import { ChevronLeft } from "../Icons/ChevronLeft";
+import CardSection from "./Cards/CardSection";
 
 interface Props {
   formData: any;
@@ -117,66 +107,55 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
           </div>
         </ButtonElement>
       </div>
-      <Card className="m-auto max-w-6xl">
-        <CardHeader className="bg-black">
-          <div className="flex justify-center gap-2 items-center">
-            <VehicleIcon />
-            <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
-              {texts.BUSINESS.project}
-            </h1>
+      <CardSection>
+        <SectionTitle
+          title="Servicios"
+          subTitle="Seleccione los servicios a realizar"
+        />
+        <div className="flex justify-center gap-4 items-center p-2">
+          <div className="w-full md:w-[60%]">
+            <Select
+              className="mb-4"
+              label="Mantenimiento"
+              placeholder="Seleccione el mantenimiento"
+              onChange={handleMaintenanceChange}
+              selectedKeys={
+                formData.maintenanceId ? [String(formData.maintenanceId)] : []
+              }
+            >
+              {maintenances.map((maintenance) => (
+                <SelectItem key={maintenance.id}>
+                  {maintenance.nombre}
+                </SelectItem>
+              ))}
+            </Select>
+            <Select
+              className="mb-4"
+              label="Correctivos"
+              placeholder="Seleccione uno varios correctivos"
+              selectionMode="multiple"
+              onSelectionChange={handleServicesChange}
+              selectedKeys={selectedServices}
+            >
+              {services.map((service) => (
+                <SelectItem key={String(service.id)}>
+                  {service.nombre}
+                </SelectItem>
+              ))}
+            </Select>
+            <Textarea
+              isRequired
+              label="Solicitud de servicio"
+              placeholder="Obervación"
+              description={
+                "Describa que servicios requiere (por ejemplo, mantenimiento preventivo, revisión de frenos, alineación y balanceo, entre otros)."
+              }
+              onChange={handleChange}
+              value={formData.observation}
+            />
           </div>
-        </CardHeader>
-        <Divider />
-        <CardBody>
-          <SectionTitle
-            title="Servicios"
-            subTitle="Seleccione los servicios a realizar"
-          />
-          <div className="flex justify-center gap-4 items-center p-2">
-            <div className="w-full md:w-[60%]">
-              <Select
-                className="mb-4"
-                label="Mantenimiento"
-                placeholder="Seleccione el mantenimiento"
-                onChange={handleMaintenanceChange}
-                selectedKeys={
-                  formData.maintenanceId ? [String(formData.maintenanceId)] : []
-                }
-              >
-                {maintenances.map((maintenance) => (
-                  <SelectItem key={maintenance.id}>
-                    {maintenance.nombre}
-                  </SelectItem>
-                ))}
-              </Select>
-              <Select
-                className="mb-4"
-                label="Correctivos"
-                placeholder="Seleccione uno varios correctivos"
-                selectionMode="multiple"
-                onSelectionChange={handleServicesChange}
-                selectedKeys={selectedServices}
-              >
-                {services.map((service) => (
-                  <SelectItem key={String(service.id)}>
-                    {service.nombre}
-                  </SelectItem>
-                ))}
-              </Select>
-              <Textarea
-                isRequired
-                label="Solicitud de servicio"
-                placeholder="Obervación"
-                description={
-                  "Describa que servicios requiere (por ejemplo, mantenimiento preventivo, revisión de frenos, alineación y balanceo, entre otros)."
-                }
-                onChange={handleChange}
-                value={formData.observation}
-              />
-            </div>
-          </div>
-        </CardBody>
-      </Card>
+        </div>
+      </CardSection>
     </>
   );
 };
