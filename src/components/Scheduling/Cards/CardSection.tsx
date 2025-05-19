@@ -1,4 +1,4 @@
-import { Children, JSX } from "react";
+import { JSX } from "react";
 import { Card, CardBody, Divider, CardHeader } from "@heroui/react";
 import { VehicleIcon } from "../../Icons/VehicleIcon";
 import texts from "../../../util/text";
