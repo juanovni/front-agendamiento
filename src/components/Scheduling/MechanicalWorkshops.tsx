@@ -22,7 +22,6 @@ const MechanicalWorkshops = ({
   const [mechanicalWorkshops, setMechanicalWorkshops] = useState<
     MechanicalWorkshops[]
   >([]);
-  const [mechanicalValue, setMechanicalValue] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [cities, setCities] = useState<string[]>([]);
@@ -73,8 +72,6 @@ const MechanicalWorkshops = ({
       timeout: 1000,
       shouldShowTimeoutProgress: true,
     });
-
-    setMechanicalValue(mechanicId);
     updateFormData({
       mechanicId,
       mechanicDetail: mechanicalWorkshopSelected,
