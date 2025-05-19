@@ -216,6 +216,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
               size="lg"
               value={formData.plate}
               onChange={handlePlateChange}
+              style={{ textTransform: "uppercase" }}
             />
           </div>
           <ButtonElement
@@ -286,6 +287,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
                   size="md"
                   value={formData[field?.id]}
                   onChange={handleChange}
+                  style={{ textTransform: "uppercase" }}
                 />
               );
             })}

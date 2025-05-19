@@ -152,6 +152,7 @@ const TypeServices = ({ formData, updateFormData, next, prev }: Props) => {
               }
               onChange={handleChange}
               value={formData.observation}
+              style={{ textTransform: "uppercase" }}
             />
           </div>
         </div>
