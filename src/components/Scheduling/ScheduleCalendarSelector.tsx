@@ -1,18 +1,12 @@
 import { useState, useEffect, ChangeEvent } from "react";
 import {
-  Card,
-  CardBody,
-  Divider,
   Select,
   SelectItem,
-  CardHeader,
   Calendar,
   User,
   Alert,
   addToast,
 } from "@heroui/react";
-import { VehicleIcon } from "../Icons/VehicleIcon";
-import texts from "../../util/text";
 import ButtonElement from "../Elements/ButtonElement";
 import "react-datepicker/dist/react-datepicker.css";
 import { today, getLocalTimeZone, getDayOfWeek } from "@internationalized/date";
@@ -21,6 +15,7 @@ import { getAdvisorsByMechanicalWokshops } from "../../services/advisorService";
 import { ChevronLeft } from "../Icons/ChevronLeft";
 import { ChevronRight } from "../Icons/ChevronRight";
 import SectionTitle from "../Elements/SectionTitle";
+import CardSection from "./Cards/CardSection";
 
 const disponibilidad: { [dia: number]: string[] } = {
   0: [], //Sunday
@@ -133,6 +128,14 @@ const ScheduleCalendarSelector = ({
     return false;
   };
 
+  const scheduleAlert =
+    selectedTime && date ? (
+      <Alert
+        className="p-2"
+        title={`Has seleccionado a las ${selectedTime} para su agendamiento vehicular.`}
+      />
+    ) : null;
+
   const _renderAvatarImage = (item: any) => {
     return (
       <User
@@ -162,80 +165,63 @@ const ScheduleCalendarSelector = ({
           </div>
         </ButtonElement>
       </div>
-      <Card className="m-auto max-w-6xl">
-        <CardHeader className="bg-black">
-          <div className="flex justify-center gap-2 items-center">
-            <VehicleIcon />
-            <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
-              {texts.BUSINESS.project}
-            </h1>
+      <CardSection alert={scheduleAlert}>
+        <SectionTitle
+          title="Horarios Disponibles"
+          subTitle="Seleccione el horario que va a realizar el mantenimiento"
+        />
+        <div className="flex justify-center gap-4 items-center mb-4">
+          <div className="w-full md:w-80">
+            <Select
+              isRequired
+              label="Asesor Ténico"
+              size="sm"
+              placeholder="Seleccione un asesor"
+              onChange={handleAdvisorChange}
+            >
+              {advisors.map((advisor) => (
+                <SelectItem key={advisor.id}>{advisor.nombre}</SelectItem>
+              ))}
+            </Select>
           </div>
-        </CardHeader>
-        <Divider />
-        <CardBody>
-          <SectionTitle
-            title="Horarios Disponibles"
-            subTitle="Seleccione el horario que va a realizar el mantenimiento"
-          />
-          <div className="flex justify-center gap-4 items-center mb-4">
-            <div className="w-full md:w-80">
-              <Select
-                isRequired
-                label="Asesor Ténico"
-                size="sm"
-                placeholder="Seleccione un asesor"
-                onChange={handleAdvisorChange}
-              >
-                {advisors.map((advisor) => (
-                  <SelectItem key={advisor.id}>{advisor.nombre}</SelectItem>
-                ))}
-              </Select>
-            </div>
-          </div>
-          <div className="flex gap-4 px-4 py-1">
-            {advisorsAvatars.map((item) => _renderAvatarImage(item))}
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-2">
-            <div className="text-center md:text-end">
-              <Calendar
-                showMonthAndYearPickers
-                onChange={(date) => handleDateChange(date)}
-                aria-label="Date (Min Date Value)"
-                defaultValue={today(getLocalTimeZone())}
-                minValue={today(getLocalTimeZone())}
-              />
-            </div>
-            <div>
-              {_renderLabel("Horas disponibles:", "font-medium mb-2")}
-              {availableHours.length === 0 ? (
-                _renderLabel("No hay horas disponibles para este día")
-              ) : (
-                <div className="flex flex-wrap gap-2">
-                  {availableHours.map((hour) => (
-                    <button
-                      key={hour}
-                      onClick={() => handleHourClick(hour)}
-                      className={`px-3 py-1 rounded border ${
-                        hour === selectedTime
-                          ? "bg-blue-600 text-white"
-                          : "bg-gray-100 hover:bg-gray-200"
-                      }`}
-                    >
-                      {hour}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-          {selectedTime && date && (
-            <Alert
-              className="p-2"
-              title={`Has seleccionado as las ${selectedTime} para su agendamiento vehicular.`}
+        </div>
+        <div className="flex gap-4 px-4 py-1">
+          {advisorsAvatars.map((item) => _renderAvatarImage(item))}
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 py-2">
+          <div className="text-center md:text-end">
+            <Calendar
+              showMonthAndYearPickers
+              onChange={(date) => handleDateChange(date)}
+              aria-label="Date (Min Date Value)"
+              defaultValue={today(getLocalTimeZone())}
+              minValue={today(getLocalTimeZone())}
             />
-          )}
-        </CardBody>
-      </Card>
+          </div>
+          <div>
+            {_renderLabel("Horas disponibles:", "font-medium mb-2")}
+            {availableHours.length === 0 ? (
+              _renderLabel("No hay horas disponibles para este día")
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {availableHours.map((hour) => (
+                  <button
+                    key={hour}
+                    onClick={() => handleHourClick(hour)}
+                    className={`px-3 py-1 rounded border ${
+                      hour === selectedTime
+                        ? "bg-blue-600 text-white"
+                        : "bg-gray-100 hover:bg-gray-200"
+                    }`}
+                  >
+                    {hour}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </CardSection>
     </>
   );
 };

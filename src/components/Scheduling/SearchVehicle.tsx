@@ -1,24 +1,14 @@
 import { useEffect, useState, ChangeEvent } from "react";
-import {
-  Card,
-  CardBody,
-  Divider,
-  Input,
-  Select,
-  SelectItem,
-  CardHeader,
-  Checkbox,
-} from "@heroui/react";
+import { Input, Select, SelectItem, Checkbox } from "@heroui/react";
 import { getVehicleInfoByPlate } from "../../services/vechicleService";
 import { getModelsByBrand } from "../../services/modelService";
 import { getBrands } from "../../services/brandService";
-import texts from "../../util/text";
 import ButtonElement from "../Elements/ButtonElement";
 import { SearchIcon } from "../Icons/SearchIcon";
-import { VehicleIcon } from "../Icons/VehicleIcon";
 import { ChevronRight } from "../Icons/ChevronRight";
 import SectionTitle from "../Elements/SectionTitle";
 import { showAlert } from "../../util/Swal";
+import CardSection from "./Cards/CardSection";
 
 const initialValues = {
   fields: [
@@ -213,106 +203,95 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
           </div>
         </ButtonElement>
       </div>
-      <Card className="m-auto max-w-6xl">
-        <CardHeader className="bg-black">
-          <div className="flex justify-center gap-2 items-center">
-            <VehicleIcon />
-            <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
-              {texts.BUSINESS.project}
-            </h1>
+      <CardSection>
+        <div className="flex justify-center gap-4 items-center">
+          <div className="w-full md:w-80">
+            <Input
+              isRequired
+              startContent={<SearchIcon />}
+              label="Placa"
+              labelPlacement="outside"
+              placeholder="GNY0123"
+              description="Ingrese la placa del vehículo"
+              size="lg"
+              value={formData.plate}
+              onChange={handlePlateChange}
+            />
           </div>
-        </CardHeader>
-        <Divider />
-        <CardBody>
-          <div className="flex justify-center gap-4 items-center">
-            <div className="w-full md:w-80">
-              <Input
-                isRequired
-                startContent={<SearchIcon />}
-                label="Placa"
-                labelPlacement="outside"
-                placeholder="GNY0123"
-                description="Ingrese la placa del vehículo"
-                size="lg"
-                value={formData.plate}
-                onChange={handlePlateChange}
-              />
-            </div>
-            <ButtonElement
-              isIconOnly
-              className="bg-orange-600 hover:bg-orange-600 text-white p-2 rounded-full shadow-md"
-              onPress={handleSearchVehicle}
-              isDisabled={disableButtonSearch}
-            >
-              <SearchIcon />
-            </ButtonElement>
-          </div>
-          <SectionTitle
-            title="Información del vehículo"
-            subTitle="Continue con el agendamiento de la cita, diligenciando los campos"
-          />
-          <Checkbox
-            className="py-4 px-6"
-            classNames={{
-              label: "text-small",
-            }}
-            color="warning"
-            checked={isChecked}
-            isSelected={isChecked}
-            onChangeCapture={(e) => setIsChecked(!isChecked)}
+          <ButtonElement
+            isIconOnly
+            className="bg-orange-600 hover:bg-orange-600 text-white p-2 rounded-full shadow-md"
+            onPress={handleSearchVehicle}
+            isDisabled={disableButtonSearch}
           >
-            <p>Desmarcar para actualizar los datos</p>
-          </Checkbox>
-          <div className="flex flex-col gap-4 p-4">
-            <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-              <Select
-                label="Marca"
-                size="sm"
-                isRequired
-                isDisabled={isChecked}
-                placeholder="Seleccione una marca"
-                onChange={handleBrandChange}
-                selectedKeys={[String(formData.brandId)]}
-              >
-                {brands.map((brand) => (
-                  <SelectItem key={brand.id}>{brand.nombre}</SelectItem>
-                ))}
-              </Select>
-              <Select
-                label="Modelo"
-                size="sm"
-                isRequired
-                isDisabled={isChecked}
-                placeholder="Seleccione una modelo"
-                onChange={handleModelChange}
-                selectedKeys={[String(formData.modelId)]}
-              >
-                {models.map((model) => (
-                  <SelectItem key={model.id}>{model.nombre}</SelectItem>
-                ))}
-              </Select>
-            </div>
-            <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
-              {initialValues.fields.map((field) => {
-                return (
-                  <Input
-                    isDisabled={isChecked}
-                    isRequired
-                    key={field.id}
-                    name={field.id}
-                    label={field.label}
-                    placeholder={field.description}
-                    type={field.type}
-                    size="md"
-                    value={formData[field?.id]}
-                    onChange={handleChange}
-                  />
-                );
-              })}
-            </div>
+            <SearchIcon />
+          </ButtonElement>
+        </div>
+        <SectionTitle
+          title="Información del vehículo"
+          subTitle="Continue con el agendamiento de la cita, diligenciando los campos"
+        />
+        <Checkbox
+          className="py-4 px-6"
+          classNames={{
+            label: "text-small",
+          }}
+          color="warning"
+          checked={isChecked}
+          isSelected={isChecked}
+          onChangeCapture={(e) => setIsChecked(!isChecked)}
+        >
+          <p>Desmarcar para actualizar los datos</p>
+        </Checkbox>
+        <div className="flex flex-col gap-4 p-4">
+          <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+            <Select
+              label="Marca"
+              size="sm"
+              isRequired
+              isDisabled={isChecked}
+              placeholder="Seleccione una marca"
+              onChange={handleBrandChange}
+              selectedKeys={[String(formData.brandId)]}
+            >
+              {brands.map((brand) => (
+                <SelectItem key={brand.id}>{brand.nombre}</SelectItem>
+              ))}
+            </Select>
+            <Select
+              label="Modelo"
+              size="sm"
+              isRequired
+              isDisabled={isChecked}
+              placeholder="Seleccione una modelo"
+              onChange={handleModelChange}
+              selectedKeys={[String(formData.modelId)]}
+            >
+              {models.map((model) => (
+                <SelectItem key={model.id}>{model.nombre}</SelectItem>
+              ))}
+            </Select>
           </div>
-        </CardBody>
-      </Card>
+          <div className="flex w-full flex-wrap md:flex-nowrap gap-4">
+            {initialValues.fields.map((field) => {
+              return (
+                <Input
+                  isDisabled={isChecked}
+                  isRequired
+                  key={field.id}
+                  name={field.id}
+                  label={field.label}
+                  placeholder={field.description}
+                  type={field.type}
+                  size="md"
+                  value={formData[field?.id]}
+                  onChange={handleChange}
+                />
+              );
+            })}
+          </div>
+        </div>
+      </CardSection>
     </>
   );
 };
