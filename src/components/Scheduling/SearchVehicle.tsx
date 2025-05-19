@@ -13,12 +13,12 @@ import { getVehicleInfoByPlate } from "../../services/vechicleService";
 import { getModelsByBrand } from "../../services/modelService";
 import { getBrands } from "../../services/brandService";
 import texts from "../../util/text";
-import Swal from "sweetalert2";
 import ButtonElement from "../Elements/ButtonElement";
 import { SearchIcon } from "../Icons/SearchIcon";
 import { VehicleIcon } from "../Icons/VehicleIcon";
 import { ChevronRight } from "../Icons/ChevronRight";
 import SectionTitle from "../Elements/SectionTitle";
+import { showAlert } from "../../util/Swal";
 
 const initialValues = {
   fields: [
@@ -69,15 +69,6 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
   const [showDetails, setShowDetails] = useState<boolean>(false);
   const [disableButtonSearch, setDisableButtonSearch] = useState<boolean>(true);
   const [isChecked, setIsChecked] = useState<boolean>(false);
-
-  const showAlert = (title: string, text: string, icon: string) => {
-    Swal.fire({
-      title,
-      text,
-      icon: "warning",
-      confirmButtonText: "Aceptar",
-    });
-  };
 
   useEffect(() => {
     fetchBrands();
@@ -171,6 +162,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
         "La placa digitada no existe en el sistema, para continuar agendando una cita complete el formulario.",
         "warning"
       );
+
       setError(response.error || "Error al obtener marcas");
     }
     setShowDetails(true);

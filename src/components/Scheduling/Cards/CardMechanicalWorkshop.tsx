@@ -1,8 +1,8 @@
-import { FC, ReactNode } from "react";
+import { FC, JSX, ReactNode } from "react";
 import { Card, CardBody, CardHeader, Image } from "@heroui/react";
 
 interface CardMechanicalWorkshopProps {
-  children?: ReactNode;
+  children?: JSX.Element | JSX.Element[];
   className?: string;
   name?: string;
   city?: string | null;
