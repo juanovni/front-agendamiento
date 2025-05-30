@@ -10,7 +10,7 @@ export const routes = {
   vehicle: {
     //v1.0
     searchByPlate: "/v1/vehicles/plate",
-    saveForm: "v1/vehicles/store/"
+    saveForm: "v1/vehicles/store/",
   },
   services: {
     //v1.0
@@ -24,5 +24,8 @@ export const routes = {
   },
   advisor: {
     advisorsByMechanicalWokshops: "/v1/advisors/mechanical-workshop",
+  },
+  workSchedules: {
+    getWorkSchedules: "/v1/work-schedules/",
   },
 };

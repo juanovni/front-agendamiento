@@ -8,33 +8,12 @@ import {
   addToast,
 } from "@heroui/react";
 import "react-datepicker/dist/react-datepicker.css";
-import { today, getLocalTimeZone, getDayOfWeek } from "@internationalized/date";
-import { useLocale } from "@react-aria/i18n";
+import { today, getLocalTimeZone } from "@internationalized/date";
 import { getAdvisorsByMechanicalWokshops } from "../../services/advisorService";
 import SectionTitle from "../Elements/SectionTitle";
 import CardSection from "./Cards/CardSection";
 import { PaginationButtons } from "./PaginationButtons/PaginationButtons";
-
-const disponibilidad: { [dia: number]: string[] } = {
-  0: [], //Sunday
-  1: [
-    "09:00",
-    "10:00",
-    "11:00",
-    "14:00",
-    "15:00",
-    "16:00",
-    "17:00",
-    "18:00",
-    "19:00",
-    "20:00",
-  ], // Monday
-  2: ["10:00", "12:00", "15:00"], // Sunday
-  3: ["08:00", "13:00", "16:00"], // Wednesday
-  4: ["09:30", "11:30", "17:00"], // Thursday
-  5: ["10:00", "14:00", "18:00"], // Friday
-  6: ["09:00", "12:00"], // Saturday
-};
+import { getWorkSchedules } from "../../services/workScheduleServices";
 
 interface Props {
   formData: any;
@@ -42,6 +21,8 @@ interface Props {
   next: () => void;
   prev: () => void;
 }
+
+type ScheduleData = [];
 
 const ScheduleCalendarSelector = ({
   formData,
@@ -57,16 +38,37 @@ const ScheduleCalendarSelector = ({
     nombre: "Todos",
     estado: "",
   };
-  let { locale } = useLocale();
   let [date, setDate] = useState(today(getLocalTimeZone()));
-  let dayOfWeek = getDayOfWeek(date, locale);
+  const [selectedAdvisor, setSelectedAdvisor] = useState<number | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const availableHours = disponibilidad[dayOfWeek];
+  const [availableHours, setAvailableHours] = useState<ScheduleData>([]);
+
+  useEffect(() => {
+    updateFormData({ date: date.toString() });
+  }, []);
 
   useEffect(() => {
     if (formData.mechanicId)
       fetchAdvisorsByMechanicalWorkshopId(formData.mechanicId);
   }, [formData.mechanicId]);
+
+  useEffect(() => {
+    if (!date) return;
+    if (!selectedAdvisor) return;
+
+    const payload: WorkSchedules = {
+      tecnico_id: selectedAdvisor,
+      fecha_agenda: date.toString(),
+    };
+    fetchWorkSchedules(payload);
+  }, [date, selectedAdvisor]);
+
+  const fetchWorkSchedules = async (payload: WorkSchedules) => {
+    const response = await getWorkSchedules(payload);
+    if (response.success && response.data) {
+      setAvailableHours(response.data);
+    }
+  };
 
   const fetchAdvisorsByMechanicalWorkshopId = async (advisorId: string) => {
     const response = await getAdvisorsByMechanicalWokshops(advisorId);
@@ -99,6 +101,7 @@ const ScheduleCalendarSelector = ({
 
   const handleAdvisorChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const advisorId = e.target.value;
+    setSelectedAdvisor(Number(advisorId));
     if (advisorId == "") {
       setAdvisorsAvatars(
         advisors.filter((advisor) => advisor.id != "").map((advisor) => advisor)
@@ -165,7 +168,7 @@ const ScheduleCalendarSelector = ({
               isRequired
               label="Asesor Ténico"
               size="sm"
-              placeholder="Seleccione un asesor"
+              placeholder="Seleccione un asesor ténico"
               onChange={handleAdvisorChange}
             >
               {advisors.map((advisor) => (
