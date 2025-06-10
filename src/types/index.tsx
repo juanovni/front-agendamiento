@@ -67,9 +67,15 @@ interface Schedule {
   id_taller: number;
   id_tecnico: number;
   id_mantenimiento: number;
-  id_correctivo:string
+  id_correctivo: string;
   estado: number;
   fecha_agenda: string;
   hora_agenda: string;
   observacion: string;
+}
+
+interface WorkSchedules {
+  id?: number;
+  tecnico_id: number;
+  fecha_agenda: string;
 }
