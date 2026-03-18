@@ -209,6 +209,11 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
               size="lg"
               value={formData.plate}
               onChange={handlePlateChange}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearchVehicle();
+                }
+              }}
               style={{ textTransform: "uppercase" }}
             />
           </div>
@@ -217,6 +222,7 @@ const SearhVehicle = ({ formData, updateFormData, next }: Props) => {
             className="bg-orange-600 hover:bg-orange-600 text-white p-2 rounded-full shadow-md"
             onPress={handleSearchVehicle}
             isDisabled={disableButtonSearch}
+            title="Buscar vehículo por placa"
           >
             <SearchIcon />
           </ButtonElement>
