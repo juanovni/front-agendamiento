@@ -27,7 +27,7 @@ export const PaginationButtons = ({
   nextIcon = <ChevronRight />,
 }: PaginationButtonsProps) => {
   return (
-    <div className="w-full flex justify-end gap-2 pr-4 mb-4">
+    <div className="w-11/12 flex justify-end gap-2 mb-4 mx-auto">
       <div className="flex justify-between gap-2">
         {!hidePrev && (
           <ButtonElement onPress={onPrev} isDisabled={isPrevDisabled}>

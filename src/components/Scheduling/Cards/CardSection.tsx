@@ -9,14 +9,14 @@ type CardProps = {
   alert?: JSX.Element | null;
 };
 
-const CardSection = ({ children, style = "max-w-6xl", alert }: CardProps) => {
+const CardSection = ({ children, style = "w-11/12", alert }: CardProps) => {
   return (
     <>
       <Card className={`m-auto ${style}`}>
         <CardHeader className="bg-black">
           <div className="flex justify-center gap-2 items-center">
             <VehicleIcon />
-            <h1 className="text-xl md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
+            <h1 className="text-sm md:text-sm font-semibold tracking-tight text-balance text-white uppercase">
               {texts.BUSINESS.project}
             </h1>
           </div>

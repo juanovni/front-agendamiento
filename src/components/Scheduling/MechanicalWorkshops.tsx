@@ -92,49 +92,47 @@ const MechanicalWorkshops = ({
         onNext={next}
         isNextDisabled={showNextButton()}
       />
-      <div className="m-4">
-        <CardSection style="w-full">
-          <div className="flex justify-between items-center pr-4 mb-4 w-full">
-            <SectionTitle
-              title="Lista de Talleres"
-              subTitle="Seleccione el taller de su preferencia"
-            />
-            <div className="flex justify-end gap-2 w-52">
-              <Select
-                label="Filtrar por ciudad"
-                size="sm"
-                onChange={handleCityChange}
-              >
-                {cities.map((city) => (
-                  <SelectItem key={city}>{city}</SelectItem>
-                ))}
-              </Select>
-            </div>
+      <CardSection>
+        <div className="flex justify-between items-center pr-4 mb-4 w-full">
+          <SectionTitle
+            title="Lista de Talleres"
+            subTitle="Seleccione el taller de su preferencia"
+          />
+          <div className="flex justify-end gap-2 w-52">
+            <Select
+              label="Filtrar por ciudad"
+              size="sm"
+              onChange={handleCityChange}
+            >
+              {cities.map((city) => (
+                <SelectItem key={city}>{city}</SelectItem>
+              ))}
+            </Select>
           </div>
+        </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 m-2">
-            {mechanicalWorkshops.map((mechanicalWorkshop) => (
-              <div
-                key={mechanicalWorkshop.id}
-                onClick={(e) =>
-                  handleMechanicalClick(parseInt(mechanicalWorkshop.id))
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 m-2">
+          {mechanicalWorkshops.map((mechanicalWorkshop) => (
+            <div
+              key={mechanicalWorkshop.id}
+              onClick={(e) =>
+                handleMechanicalClick(parseInt(mechanicalWorkshop.id))
+              }
+            >
+              <CardMechanicalWorkshop
+                name={mechanicalWorkshop.nombre}
+                city={mechanicalWorkshop.ciudad}
+                address={mechanicalWorkshop.direccion}
+                phone={mechanicalWorkshop.telefono}
+                isSelected={
+                  formData.mechanicId == parseInt(mechanicalWorkshop.id)
                 }
-              >
-                <CardMechanicalWorkshop
-                  name={mechanicalWorkshop.nombre}
-                  city={mechanicalWorkshop.ciudad}
-                  address={mechanicalWorkshop.direccion}
-                  phone={mechanicalWorkshop.telefono}
-                  isSelected={
-                    formData.mechanicId == parseInt(mechanicalWorkshop.id)
-                  }
-                  maintenanceList={mechanicalWorkshop.mantenimientos}
-                ></CardMechanicalWorkshop>
-              </div>
-            ))}
-          </div>
-        </CardSection>
-      </div>
+                maintenanceList={mechanicalWorkshop.mantenimientos}
+              ></CardMechanicalWorkshop>
+            </div>
+          ))}
+        </div>
+      </CardSection>
     </>
   );
 };
