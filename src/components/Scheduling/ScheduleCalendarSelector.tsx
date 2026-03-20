@@ -13,7 +13,10 @@ import { getAdvisorsByMechanicalWokshops } from "../../services/advisorService";
 import SectionTitle from "../Elements/SectionTitle";
 import CardSection from "./Cards/CardSection";
 import { PaginationButtons } from "./PaginationButtons/PaginationButtons";
-import { getAvailableHours, getWorkSchedules } from "../../services/workScheduleServices";
+import {
+  getAvailableHours,
+  getWorkSchedules,
+} from "../../services/workScheduleServices";
 
 interface Props {
   formData: any;
@@ -21,6 +24,8 @@ interface Props {
   next: () => void;
   prev: () => void;
 }
+
+const UNASSIGNED_ID = "1";
 
 const ScheduleCalendarSelector = ({
   formData,
@@ -33,6 +38,7 @@ const ScheduleCalendarSelector = ({
   let [date, setDate] = useState(today(getLocalTimeZone()));
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
   const [availableHours, setAvailableHours] = useState<string[]>([]);
+  const [selectedAdvisor, setSelectedAdvisor] = useState<number | null>(null);
 
   useEffect(() => {
     updateFormData({ date: date.toString() });
@@ -44,10 +50,9 @@ const ScheduleCalendarSelector = ({
   }, [formData.mechanicId]);
 
   useEffect(() => {
-    if (!date) return;
-
+    if (!date || !formData.advisorId) return;
     loadAvailableHours(date.toString());
-  }, [date]);
+  }, [date, formData.advisorId]);
 
   const fetchAdvisorsByMechanicalWorkshopId = async (advisorId: string) => {
     const response = await getAdvisorsByMechanicalWokshops(advisorId);
@@ -57,6 +62,13 @@ const ScheduleCalendarSelector = ({
       });
       setAdvisors([...advisorProcess]);
       setAdvisorsAvatars([...advisorProcess]);
+      setSelectedAdvisor(Number(UNASSIGNED_ID));
+
+      updateFormData({
+        advisorId: UNASSIGNED_ID,
+        advisorName: "Sin asignar",
+        date: today(getLocalTimeZone()).toString(),
+      });
     }
   };
 
@@ -195,6 +207,7 @@ const ScheduleCalendarSelector = ({
               size="sm"
               placeholder="Seleccione un asesor ténico"
               onChange={handleAdvisorChange}
+              selectedKeys={selectedAdvisor ? [String(selectedAdvisor)] : []}
             >
               {advisors.map((advisor) => (
                 <SelectItem key={advisor.id}>{advisor.nombre}</SelectItem>
