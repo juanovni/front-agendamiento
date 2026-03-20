@@ -1,13 +1,5 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import {
-  Select,
-  SelectItem,
-  Calendar,
-  User,
-  Alert,
-  addToast,
-} from "@heroui/react";
-import "react-datepicker/dist/react-datepicker.css";
+import { Calendar, User, Alert, addToast, Tooltip } from "@heroui/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { getAdvisorsByMechanicalWokshops } from "../../services/advisorService";
 import SectionTitle from "../Elements/SectionTitle";
@@ -18,14 +10,13 @@ import {
   getWorkSchedules,
 } from "../../services/workScheduleServices";
 
+import "react-datepicker/dist/react-datepicker.css";
 interface Props {
   formData: any;
   updateFormData: (data: Partial<any>) => void;
   next: () => void;
   prev: () => void;
 }
-
-const UNASSIGNED_ID = "1";
 
 const ScheduleCalendarSelector = ({
   formData,
@@ -60,13 +51,16 @@ const ScheduleCalendarSelector = ({
       const advisorProcess = response.data.map((adv) => {
         return adv;
       });
+
+      let tempAdvisor = advisorProcess[0];
+
       setAdvisors([...advisorProcess]);
       setAdvisorsAvatars([...advisorProcess]);
-      setSelectedAdvisor(Number(UNASSIGNED_ID));
+      setSelectedAdvisor(+tempAdvisor?.id);
 
       updateFormData({
-        advisorId: UNASSIGNED_ID,
-        advisorName: "Sin asignar",
+        advisorId: tempAdvisor?.id,
+        advisorName: tempAdvisor?.nombre,
         date: today(getLocalTimeZone()).toString(),
       });
     }
@@ -176,14 +170,21 @@ const ScheduleCalendarSelector = ({
 
   const _renderAvatarImage = (item: any) => {
     return (
-      <User
-        key={item.id}
-        avatarProps={{
-          src: "https://avatars.githubusercontent.com/u/30373425?v=4",
-        }}
-        description="Asesor Ténico"
-        name={item.nombre}
-      />
+      <Tooltip
+        placement="bottom"
+        color="default"
+        content="El Asesor Ténico será asignado al momento de confirmar el agendamiento"
+      >
+        <User
+          className="cursor-pointer"
+          key={item.id}
+          avatarProps={{
+            src: "https://cdn-icons-png.flaticon.com/512/1321/1321737.png",
+          }}
+          description="Asesor Ténico"
+          name="Sin Asignar"
+        />
+      </Tooltip>
     );
   };
 
@@ -200,20 +201,7 @@ const ScheduleCalendarSelector = ({
           subTitle="Seleccione el horario que va a realizar el mantenimiento"
         />
         <div className="flex justify-center gap-4 items-center mb-4">
-          <div className="w-full md:w-80">
-            <Select
-              isRequired
-              label="Asesor Ténico"
-              size="sm"
-              placeholder="Seleccione un asesor ténico"
-              onChange={handleAdvisorChange}
-              selectedKeys={selectedAdvisor ? [String(selectedAdvisor)] : []}
-            >
-              {advisors.map((advisor) => (
-                <SelectItem key={advisor.id}>{advisor.nombre}</SelectItem>
-              ))}
-            </Select>
-          </div>
+          <div className="w-full md:w-80"></div>
         </div>
         <div className="flex gap-4 px-4 py-1">
           {advisorsAvatars.map((item) => _renderAvatarImage(item))}
