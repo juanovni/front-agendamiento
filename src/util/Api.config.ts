@@ -26,6 +26,7 @@ export const routes = {
     advisorsByMechanicalWokshops: "/v1/advisors/mechanical-workshop",
   },
   workSchedules: {
-    getWorkSchedules: "/v1/work-schedules/",
+    getWorkSchedules: "/v1/work-schedules/check-availability",
+    getAvailableHours: "/v1/work-schedules/available-hours",
   },
 };

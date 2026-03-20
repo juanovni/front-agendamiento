@@ -13,7 +13,7 @@ import { getAdvisorsByMechanicalWokshops } from "../../services/advisorService";
 import SectionTitle from "../Elements/SectionTitle";
 import CardSection from "./Cards/CardSection";
 import { PaginationButtons } from "./PaginationButtons/PaginationButtons";
-import { getWorkSchedules } from "../../services/workScheduleServices";
+import { getAvailableHours, getWorkSchedules } from "../../services/workScheduleServices";
 
 interface Props {
   formData: any;
@@ -21,8 +21,6 @@ interface Props {
   next: () => void;
   prev: () => void;
 }
-
-type ScheduleData = [];
 
 const ScheduleCalendarSelector = ({
   formData,
@@ -32,16 +30,9 @@ const ScheduleCalendarSelector = ({
 }: Props) => {
   const [advisors, setAdvisors] = useState<Advisor[]>([]);
   const [advisorsAvatars, setAdvisorsAvatars] = useState<Advisor[] | []>([]);
-  const allAdvisor: Advisor = {
-    id: "",
-    guid: "",
-    nombre: "Todos",
-    estado: "",
-  };
   let [date, setDate] = useState(today(getLocalTimeZone()));
-  const [selectedAdvisor, setSelectedAdvisor] = useState<number | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [availableHours, setAvailableHours] = useState<ScheduleData>([]);
+  const [availableHours, setAvailableHours] = useState<string[]>([]);
 
   useEffect(() => {
     updateFormData({ date: date.toString() });
@@ -54,21 +45,9 @@ const ScheduleCalendarSelector = ({
 
   useEffect(() => {
     if (!date) return;
-    if (!selectedAdvisor) return;
 
-    const payload: WorkSchedules = {
-      tecnico_id: selectedAdvisor,
-      fecha_agenda: date.toString(),
-    };
-    fetchWorkSchedules(payload);
-  }, [date, selectedAdvisor]);
-
-  const fetchWorkSchedules = async (payload: WorkSchedules) => {
-    const response = await getWorkSchedules(payload);
-    if (response.success && response.data) {
-      setAvailableHours(response.data);
-    }
-  };
+    loadAvailableHours(date.toString());
+  }, [date]);
 
   const fetchAdvisorsByMechanicalWorkshopId = async (advisorId: string) => {
     const response = await getAdvisorsByMechanicalWokshops(advisorId);
@@ -76,7 +55,6 @@ const ScheduleCalendarSelector = ({
       const advisorProcess = response.data.map((adv) => {
         return adv;
       });
-      //setAdvisors([allAdvisor, ...advisorProcess]);
       setAdvisors([...advisorProcess]);
       setAdvisorsAvatars([...advisorProcess]);
     }
@@ -88,23 +66,70 @@ const ScheduleCalendarSelector = ({
     updateFormData({ date: date.toString() });
   };
 
-  const handleHourClick = (hour: string) => {
+  const handleHourClick = async (hour: string) => {
+    if (!formData.date) return;
+
+    const response = await getWorkSchedules({
+      id_taller: formData.mechanicId,
+      fecha_agenda: formData.date,
+      hora_agenda: hour,
+    });
+
+    if (!response.data?.available) {
+      addToast({
+        color: "danger",
+        title: "Horario lleno",
+        description: "Seleccione otra hora disponible",
+        timeout: 2000,
+      });
+      return;
+    }
+
     setSelectedTime(hour);
     updateFormData({ time: hour });
+
     addToast({
       title: "Taller!",
-      description: `Has seleccionado as las ${hour} para su agendamiento vehicular.`,
+      description: `Has seleccionado las ${hour} para su agendamiento vehicular.`,
       timeout: 2000,
       shouldShowTimeoutProgress: true,
     });
   };
 
+  const loadAvailableHours = async (date: string) => {
+    if (!formData.mechanicId) {
+      addToast({
+        title: "Error",
+        description: "Seleccione un taller primero",
+        timeout: 2000,
+      });
+      return;
+    }
+
+    const response = await getAvailableHours({
+      tecnico_id: formData.advisorId,
+      fecha_agenda: date,
+    });
+
+    if (!response.success) {
+      addToast({
+        title: "Error",
+        description: response.error || "Error cargando horarios",
+        timeout: 2000,
+      });
+      return;
+    }
+
+    setAvailableHours(response.data || []);
+  };
+
   const handleAdvisorChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const advisorId = e.target.value;
-    setSelectedAdvisor(Number(advisorId));
     if (advisorId == "") {
       setAdvisorsAvatars(
-        advisors.filter((advisor) => advisor.id != "").map((advisor) => advisor)
+        advisors
+          .filter((advisor) => advisor.id != "")
+          .map((advisor) => advisor),
       );
     } else {
       const advisorProcess = advisors
@@ -113,7 +138,7 @@ const ScheduleCalendarSelector = ({
       setAdvisorsAvatars([...advisorProcess]);
     }
     const advisorSelected = advisors.find(
-      (ad) => parseInt(ad.id) == Number(advisorId)
+      (ad) => parseInt(ad.id) == Number(advisorId),
     );
     updateFormData({ advisorId, advisorName: advisorSelected?.nombre });
   };
