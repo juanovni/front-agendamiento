@@ -7,10 +7,10 @@ interface Props {
 
 const Layout = ({ children }: Props) => {
   return (
-    <>
+    <div className="w-full m-auto">
       <Nav />
       <div className="mx-auto py-6 lg:py-4">{children}</div>
-    </>
+    </div>
   );
 };
 

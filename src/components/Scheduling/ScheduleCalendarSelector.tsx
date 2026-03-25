@@ -1,28 +1,22 @@
 import { useState, useEffect, ChangeEvent } from "react";
-import {
-  Select,
-  SelectItem,
-  Calendar,
-  User,
-  Alert,
-  addToast,
-} from "@heroui/react";
-import "react-datepicker/dist/react-datepicker.css";
+import { Calendar, User, Alert, addToast, Tooltip } from "@heroui/react";
 import { today, getLocalTimeZone } from "@internationalized/date";
 import { getAdvisorsByMechanicalWokshops } from "../../services/advisorService";
 import SectionTitle from "../Elements/SectionTitle";
 import CardSection from "./Cards/CardSection";
 import { PaginationButtons } from "./PaginationButtons/PaginationButtons";
-import { getWorkSchedules } from "../../services/workScheduleServices";
+import {
+  getAvailableHours,
+  getWorkSchedules,
+} from "../../services/workScheduleServices";
 
+import "react-datepicker/dist/react-datepicker.css";
 interface Props {
   formData: any;
   updateFormData: (data: Partial<any>) => void;
   next: () => void;
   prev: () => void;
 }
-
-type ScheduleData = [];
 
 const ScheduleCalendarSelector = ({
   formData,
@@ -32,16 +26,10 @@ const ScheduleCalendarSelector = ({
 }: Props) => {
   const [advisors, setAdvisors] = useState<Advisor[]>([]);
   const [advisorsAvatars, setAdvisorsAvatars] = useState<Advisor[] | []>([]);
-  const allAdvisor: Advisor = {
-    id: "",
-    guid: "",
-    nombre: "Todos",
-    estado: "",
-  };
   let [date, setDate] = useState(today(getLocalTimeZone()));
-  const [selectedAdvisor, setSelectedAdvisor] = useState<number | null>(null);
   const [selectedTime, setSelectedTime] = useState<string | null>(null);
-  const [availableHours, setAvailableHours] = useState<ScheduleData>([]);
+  const [availableHours, setAvailableHours] = useState<string[]>([]);
+  const [selectedAdvisor, setSelectedAdvisor] = useState<number | null>(null);
 
   useEffect(() => {
     updateFormData({ date: date.toString() });
@@ -53,22 +41,9 @@ const ScheduleCalendarSelector = ({
   }, [formData.mechanicId]);
 
   useEffect(() => {
-    if (!date) return;
-    if (!selectedAdvisor) return;
-
-    const payload: WorkSchedules = {
-      tecnico_id: selectedAdvisor,
-      fecha_agenda: date.toString(),
-    };
-    fetchWorkSchedules(payload);
-  }, [date, selectedAdvisor]);
-
-  const fetchWorkSchedules = async (payload: WorkSchedules) => {
-    const response = await getWorkSchedules(payload);
-    if (response.success && response.data) {
-      setAvailableHours(response.data);
-    }
-  };
+    if (!date || !formData.advisorId) return;
+    loadAvailableHours(date.toString());
+  }, [date, formData.advisorId]);
 
   const fetchAdvisorsByMechanicalWorkshopId = async (advisorId: string) => {
     const response = await getAdvisorsByMechanicalWokshops(advisorId);
@@ -76,9 +51,18 @@ const ScheduleCalendarSelector = ({
       const advisorProcess = response.data.map((adv) => {
         return adv;
       });
-      //setAdvisors([allAdvisor, ...advisorProcess]);
+
+      let tempAdvisor = advisorProcess[0];
+
       setAdvisors([...advisorProcess]);
       setAdvisorsAvatars([...advisorProcess]);
+      setSelectedAdvisor(+tempAdvisor?.id);
+
+      updateFormData({
+        advisorId: tempAdvisor?.id,
+        advisorName: tempAdvisor?.nombre,
+        date: today(getLocalTimeZone()).toString(),
+      });
     }
   };
 
@@ -88,23 +72,70 @@ const ScheduleCalendarSelector = ({
     updateFormData({ date: date.toString() });
   };
 
-  const handleHourClick = (hour: string) => {
+  const handleHourClick = async (hour: string) => {
+    if (!formData.date) return;
+
+    const response = await getWorkSchedules({
+      id_taller: formData.mechanicId,
+      fecha_agenda: formData.date,
+      hora_agenda: hour,
+    });
+
+    if (!response.data?.available) {
+      addToast({
+        color: "danger",
+        title: "Horario lleno",
+        description: "Seleccione otra hora disponible",
+        timeout: 2000,
+      });
+      return;
+    }
+
     setSelectedTime(hour);
     updateFormData({ time: hour });
+
     addToast({
       title: "Taller!",
-      description: `Has seleccionado as las ${hour} para su agendamiento vehicular.`,
+      description: `Has seleccionado las ${hour} para su agendamiento vehicular.`,
       timeout: 2000,
       shouldShowTimeoutProgress: true,
     });
   };
 
+  const loadAvailableHours = async (date: string) => {
+    if (!formData.mechanicId) {
+      addToast({
+        title: "Error",
+        description: "Seleccione un taller primero",
+        timeout: 2000,
+      });
+      return;
+    }
+
+    const response = await getAvailableHours({
+      tecnico_id: formData.advisorId,
+      fecha_agenda: date,
+    });
+
+    if (!response.success) {
+      addToast({
+        title: "Error",
+        description: response.error || "Error cargando horarios",
+        timeout: 2000,
+      });
+      return;
+    }
+
+    setAvailableHours(response.data || []);
+  };
+
   const handleAdvisorChange = (e: ChangeEvent<HTMLSelectElement>) => {
     const advisorId = e.target.value;
-    setSelectedAdvisor(Number(advisorId));
     if (advisorId == "") {
       setAdvisorsAvatars(
-        advisors.filter((advisor) => advisor.id != "").map((advisor) => advisor)
+        advisors
+          .filter((advisor) => advisor.id != "")
+          .map((advisor) => advisor),
       );
     } else {
       const advisorProcess = advisors
@@ -113,7 +144,7 @@ const ScheduleCalendarSelector = ({
       setAdvisorsAvatars([...advisorProcess]);
     }
     const advisorSelected = advisors.find(
-      (ad) => parseInt(ad.id) == Number(advisorId)
+      (ad) => parseInt(ad.id) == Number(advisorId),
     );
     updateFormData({ advisorId, advisorName: advisorSelected?.nombre });
   };
@@ -139,14 +170,21 @@ const ScheduleCalendarSelector = ({
 
   const _renderAvatarImage = (item: any) => {
     return (
-      <User
-        key={item.id}
-        avatarProps={{
-          src: "https://avatars.githubusercontent.com/u/30373425?v=4",
-        }}
-        description="Asesor Ténico"
-        name={item.nombre}
-      />
+      <Tooltip
+        placement="bottom"
+        color="default"
+        content="El Asesor Ténico será asignado al momento de confirmar el agendamiento"
+      >
+        <User
+          className="cursor-pointer"
+          key={item.id}
+          avatarProps={{
+            src: "https://cdn-icons-png.flaticon.com/512/1321/1321737.png",
+          }}
+          description="Asesor Ténico"
+          name="Sin Asignar"
+        />
+      </Tooltip>
     );
   };
 
@@ -163,19 +201,7 @@ const ScheduleCalendarSelector = ({
           subTitle="Seleccione el horario que va a realizar el mantenimiento"
         />
         <div className="flex justify-center gap-4 items-center mb-4">
-          <div className="w-full md:w-80">
-            <Select
-              isRequired
-              label="Asesor Ténico"
-              size="sm"
-              placeholder="Seleccione un asesor ténico"
-              onChange={handleAdvisorChange}
-            >
-              {advisors.map((advisor) => (
-                <SelectItem key={advisor.id}>{advisor.nombre}</SelectItem>
-              ))}
-            </Select>
-          </div>
+          <div className="w-full md:w-80"></div>
         </div>
         <div className="flex gap-4 px-4 py-1">
           {advisorsAvatars.map((item) => _renderAvatarImage(item))}

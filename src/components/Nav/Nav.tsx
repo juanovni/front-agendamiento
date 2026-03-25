@@ -16,14 +16,16 @@ export const AcmeLogo = () => {
 
 const Nav = () => {
   return (
-    <Navbar className="bg-orange-600 text-white">
-      <NavbarBrand>
-        <AcmeLogo />
-        <p className="font-bold text-inherit">
-          {texts.BUSINESS.businessTitle.first}
-        </p>
-      </NavbarBrand>
-    </Navbar>
+    <div className="bg-orange-600 text-white shadow-md sticky top-0 z-50">
+      <div className="w-full max-w-full mx-auto flex items-center justify-between px-4 md:px-16 py-2">
+        <div className="flex items-center gap-2">
+          <AcmeLogo />
+          <p className="font-bold text-sm md:text-base">
+            {texts.BUSINESS.businessTitle.first}
+          </p>
+        </div>
+      </div>
+    </div>
   );
 };
 

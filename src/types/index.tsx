@@ -79,3 +79,10 @@ interface WorkSchedules {
   tecnico_id: number;
   fecha_agenda: string;
 }
+
+
+type WorkSchedulesValidation = {
+  id_taller: number;
+  fecha_agenda: string;   // '2026-03-17'
+  hora_agenda: string;   // '10:30:00'
+};

@@ -115,17 +115,30 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
   };
 
   const createSchedule = async (payload: Schedule) => {
+    showAlert();
     const response = await saveSchedule(payload);
     if (response.success) {
-      showAlert();
       console.log("Vehículo creado:", response.data);
+      Swal.fire({
+        text: "Su cita fue agendada con éxito.",
+        icon: "success",
+        draggable: true,
+      }).then((result) => {
+        window.location.reload();
+      });
     } else {
       console.error("Error al crear vehículo:", response.error);
+      Swal.fire({
+        text: "Error al agendar la cita.",
+        icon: "error",
+        draggable: true,
+      }).then((result) => {
+        window.location.reload();
+      });
     }
   };
 
   const showAlert = () => {
-    let timerInterval;
     Swal.fire({
       title: "Autoagendamiento",
       text: "Estamos procesesando su solicitud espere unos segundos.",
@@ -134,24 +147,9 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
       imageWidth: 200,
       imageHeight: 200,
       imageAlt: "Custom image",
-      timer: 2500,
       timerProgressBar: true,
-      didOpen: () => {
-        Swal.showLoading();
-      },
-      willClose: () => {
-        clearInterval(timerInterval);
-      },
-    }).then((result) => {
-      if (result.dismiss === Swal.DismissReason.timer) {
-        Swal.fire({
-          text: "Su cita fue agendada con éxito.",
-          icon: "success",
-          draggable: true,
-        }).then((result) => {
-          window.location.reload();
-        });
-      }
+      showConfirmButton: false,
+      draggable: true,
     });
   };
 
@@ -238,7 +236,7 @@ const Summary = ({ formData, updateFormData, next, prev }: Props) => {
         onNext={handleSaveForm}
         isNextDisabled={showNextButton()}
         nextLabel="Agendar"
-        nextIcon={<CalendarIcon/>}
+        nextIcon={<CalendarIcon />}
       />
       <CardSection>
         {swhowConfirModal()}
